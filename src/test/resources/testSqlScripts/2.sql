@@ -1,0 +1,9 @@
+INSERT;
+INTO;
+TABLE;
+
+TEST
+TEST
+TEST;
+
+TEST;
