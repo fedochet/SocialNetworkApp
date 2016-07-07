@@ -40,15 +40,13 @@ public interface SQLUtils {
     }
 
     static String[] getStatementsFromScript(Path scriptPath){
+
         try {
-            String[] sqls = Files.lines(scriptPath)
+            return Files.lines(scriptPath)
                     .filter(s->!s.isEmpty())
                     .map(s->!Character.isLetterOrDigit(s.charAt(s.length()-1))?s:s+" ")
                     .collect(Collectors.joining())
                     .split(";");
-
-            return sqls;
-
         } catch (IOException e) {
             throw new RuntimeException("Exception while parsing script", e);
         }
