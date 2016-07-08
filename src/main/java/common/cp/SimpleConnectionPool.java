@@ -1,10 +1,9 @@
 package common.cp;
 
-import sun.security.krb5.SCDynamicStoreConfig;
-
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -83,20 +82,20 @@ public class SimpleConnectionPool implements ConnectionPool{
         return new ConnectionProxy(connection) {
             @Override
             public void close() throws SQLException {
-                if (getConnection().isClosed()) {
+                if (connection.isClosed()) {
                     throw new SQLException("Connection is already closed");
                 }
 
-                if (getConnection().isReadOnly()) {
-                    getConnection().setReadOnly(false);
+                if (connection.isReadOnly()) {
+                    connection.setReadOnly(false);
                 }
 
                 if (reservedConnections.contains(this) && !reservedConnections.remove(this))
                     throw new RuntimeException("Error deleting connection from the given away connections pool.");
 
                 if (isClosing) {
-                    getConnection().close();
-                } else if (!freeConnections.offer(getConnection())) {
+                    connection.close();
+                } else if (!freeConnections.offer(connection)) {
                     throw new RuntimeException("Cannot return connection to pool");
                 }
             }
