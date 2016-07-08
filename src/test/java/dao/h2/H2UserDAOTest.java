@@ -39,7 +39,7 @@ public class H2UserDAOTest {
     }
 
     @Test
-    public void userAppearsInDBAfterCreation() {
+    public void userAppearsInDBAfterCreationAndDisappearsAfterDeletion() {
         String testUsername = "TestUser";
         Optional<User> empty = userDAO.getByUsername(testUsername);
         assertThat(empty.isPresent(), is(false));
@@ -52,10 +52,19 @@ public class H2UserDAOTest {
         int testId = userDAO.create(testUser);
 
         assertNotNull(testId);
+        testUser.setId(testId);
 
         Optional<User> nonEmpty1 = userDAO.getById(testId);
         assertTrue(nonEmpty1.isPresent());
-        assertThat(nonEmpty1.get().getId(),is(testId));
-        assertThat(nonEmpty1.get().getUsername(), is(testUsername));
+        assertThat(nonEmpty1.get(),is(testUser));
+
+        Optional<User> nonEmpty2 = userDAO.getByUsername(testUsername);
+        assertTrue(nonEmpty2.isPresent());
+        assertThat(nonEmpty2.get(), is(testUser));
+
+        assertTrue(userDAO.deleteById(testId));
+        assertFalse(userDAO.getById(testId).isPresent());
+        assertFalse(userDAO.deleteById(testId));
     }
+
 }

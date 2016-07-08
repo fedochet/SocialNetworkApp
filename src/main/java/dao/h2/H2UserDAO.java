@@ -17,9 +17,41 @@ public class H2UserDAO implements UserDAO {
         this.connectionPool = connectionPool;
     }
 
+    private Optional<User> parseUser(ResultSet resultSet) {
+        try {
+            if (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setUsername(resultSet.getString("username"));
+                user.setPassword(resultSet.getString("password"));
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setBirthDate(resultSet.getDate("birth_date").toLocalDate());
+                user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
+                return Optional.of(user);
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public Optional<User> getByUsername(String username) {
-        return Optional.empty();
+        String sql = "SELECT id, username, password, first_name, last_name, birth_date, registration_time " +
+                "FROM users WHERE username=?";
+        try (
+            Connection c = connectionPool.getConnection();
+            PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return parseUser(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -34,7 +66,7 @@ public class H2UserDAO implements UserDAO {
                 "VALUES (?,?,?,?,?,?)";
         try (
                 Connection c = connectionPool.getConnection();
-                PreparedStatement statement = c.prepareStatement(sql);
+                PreparedStatement statement = c.prepareStatement(sql)
         ) {
             statement.setString(1, model.getUsername());
             statement.setString(2, model.getPassword());
@@ -56,24 +88,15 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public Optional<User> getById(int id) {
-        String sql = "SELECT id, username, first_name, last_name, birth_date, registration_time " +
-                "FROM users WHERE id=" + id;
+        String sql = "SELECT id, username, password, first_name, last_name, birth_date, registration_time " +
+                "FROM users WHERE id=?";
         try (
                 Connection c = connectionPool.getConnection();
-                Statement statement = c.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql)
+                PreparedStatement statement = c.prepareStatement(sql)
         ) {
-            if (resultSet.next()) {
-                User user = new User();
-                user.setId(resultSet.getInt(1));
-                user.setUsername(resultSet.getString(2));
-                user.setFirstName(resultSet.getString(3));
-                user.setLastName(resultSet.getString(4));
-                user.setBirthDate(resultSet.getDate(5).toLocalDate());
-                user.setRegistrationTime(resultSet.getTimestamp(6).toInstant());
-                return Optional.of(user);
-            } else {
-                return Optional.empty();
+            statement.setInt(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return parseUser(resultSet);
             }
 
         } catch (SQLException e) {
@@ -88,6 +111,15 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public boolean deleteById(int id) {
-        return false;
+        String sql = "DELETE FROM users WHERE id=?";
+        try (
+            Connection c = connectionPool.getConnection();
+            PreparedStatement statement = c.prepareStatement(sql)
+        ){
+            statement.setInt(1, id);
+            return statement.executeUpdate()!=0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
