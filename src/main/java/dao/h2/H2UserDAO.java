@@ -51,6 +51,15 @@ public class H2UserDAO implements UserDAO {
         }
     }
 
+    private void setUpUser(PreparedStatement statement, User model) throws SQLException {
+        statement.setString(1, model.getUsername());
+        statement.setString(2, model.getPassword());
+        statement.setString(3, model.getFirstName());
+        statement.setString(4, model.getLastName());
+        statement.setDate(5, mapOrNull(model.getBirthDate(), Date::valueOf));
+        statement.setTimestamp(6, mapOrElse(model.getRegistrationTime(), Timestamp::from, Timestamp.from(Instant.now())));
+    }
+
     @Override
     public Optional<User> getByUsername(String username) {
         String sql = "SELECT id, username, password, first_name, last_name, birth_date, registration_time " +
@@ -69,11 +78,6 @@ public class H2UserDAO implements UserDAO {
     }
 
     @Override
-    public Optional<String> getPasswordByUsername(String username) {
-        return null;
-    }
-
-    @Override
     public int create(User model) {
         String sql = "INSERT INTO " +
                 "users(username, password,first_name, last_name, birth_date, registration_time) " +
@@ -82,12 +86,7 @@ public class H2UserDAO implements UserDAO {
                 Connection c = connectionPool.getConnection();
                 PreparedStatement statement = c.prepareStatement(sql)
         ) {
-            statement.setString(1, model.getUsername());
-            statement.setString(2, model.getPassword());
-            statement.setString(3, model.getFirstName());
-            statement.setString(4, model.getLastName());
-            statement.setDate(5, mapOrNull(model.getBirthDate(), Date::valueOf));
-            statement.setTimestamp(6, mapOrElse(model.getRegistrationTime(), Timestamp::from, Timestamp.from(Instant.now())));
+            setUpUser(statement, model);
             statement.executeUpdate();
 
             try (ResultSet generated = statement.getGeneratedKeys()){
@@ -120,7 +119,21 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public boolean update(User model) {
-        return false;
+        String sql = "UPDATE users SET "
+                + "username=?, password=?, first_name=?, last_name=?, birth_date=?, registration_time=? "
+                + "WHERE id=?";
+
+        try (
+            Connection c = connectionPool.getConnection();
+            PreparedStatement statement = c.prepareStatement(sql)
+        ){
+            setUpUser(statement, model);
+            statement.setInt(7, model.getId());
+            return statement.executeUpdate()>0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

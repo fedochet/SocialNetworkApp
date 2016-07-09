@@ -127,7 +127,7 @@ public class H2UserDAOTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void usernameCannotBeNull() {
+    public void usernameCannotBeNullOnInsert() {
         User testUser = getTestUser();
         testUser.setUsername(null);
 
@@ -136,7 +136,24 @@ public class H2UserDAOTest {
     }
 
     @Test
-    public void passwordCannotBeNull() {
+    public void usernameCannotBeNullOnUpdate() {
+        User testUser = getTestUser();
+        int testId = userDAO.create(testUser);
+        testUser.setId(testId);
+        testUser.setUsername(null);
+
+        try {
+            userDAO.update(testUser);
+            fail("Expected RuntimeException");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+        userDAO.deleteById(testId);
+    }
+
+    @Test
+    public void passwordCannotBeNullOnInsert() {
         User testUser = getTestUser();
         testUser.setPassword(null);
 
@@ -144,4 +161,50 @@ public class H2UserDAOTest {
         userDAO.create(testUser);
     }
 
+    @Test
+    public void passwordCannotBeNullOnUpdate() {
+        User testUser = getTestUser();
+        int testId = userDAO.create(testUser);
+        testUser.setId(testId);
+        testUser.setPassword(null);
+
+        try {
+            userDAO.update(testUser);
+            fail("Expected RuntimeException");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+        userDAO.deleteById(testId);
+    }
+
+    @Test
+    public void updateTest() {
+        User user = getTestUser();
+        int testId = userDAO.create(user);
+        user.setId(testId);
+        assertTrue(userDAO.update(user));
+
+        user.setUsername("username");
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setBirthDate(LocalDate.now());
+        user.setPassword("testPassword");
+
+        assertTrue(userDAO.update(user));
+
+        Optional<User> updatedUserOpt = userDAO.getById(testId);
+
+        assertTrue(updatedUserOpt.isPresent());
+        assertThat(updatedUserOpt.get(), is(user));
+
+        userDAO.deleteById(testId);
+    }
+
+    @Test
+    public void updatingNonExistingUserReturnsFalse() {
+        User testUser = getTestUser();
+        testUser.setId(-1);
+        assertFalse(userDAO.update(testUser));
+    }
 }

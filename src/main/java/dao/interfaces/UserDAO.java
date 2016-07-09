@@ -9,5 +9,4 @@ import java.util.Optional;
  */
 public interface UserDAO extends AbstractDAO<User>{
     Optional<User> getByUsername(String username);
-    Optional<String> getPasswordByUsername(String username);
 }
