@@ -5,7 +5,10 @@ import dao.interfaces.UserDAO;
 import model.User;
 
 import java.sql.*;
-import java.util.Optional;
+import java.sql.Date;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Created by roman on 08.07.2016.
@@ -17,6 +20,17 @@ public class H2UserDAO implements UserDAO {
         this.connectionPool = connectionPool;
     }
 
+    private<T,B> B mapOrNull(T valueToCheck, Function<T,B> map) {
+        return mapOrElse(valueToCheck, map, null);
+    }
+
+    private <T,B> B mapOrElse(T valueToCheck, Function<T,B> map, B defaultValue) {
+        if (valueToCheck == null)
+            return defaultValue;
+
+        return map.apply(valueToCheck);
+    }
+
     private Optional<User> parseUser(ResultSet resultSet) {
         try {
             if (resultSet.next()) {
@@ -26,7 +40,7 @@ public class H2UserDAO implements UserDAO {
                 user.setPassword(resultSet.getString("password"));
                 user.setFirstName(resultSet.getString("first_name"));
                 user.setLastName(resultSet.getString("last_name"));
-                user.setBirthDate(resultSet.getDate("birth_date").toLocalDate());
+                user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
                 user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
                 return Optional.of(user);
             } else {
@@ -72,8 +86,8 @@ public class H2UserDAO implements UserDAO {
             statement.setString(2, model.getPassword());
             statement.setString(3, model.getFirstName());
             statement.setString(4, model.getLastName());
-            statement.setDate(5, Date.valueOf(model.getBirthDate()));
-            statement.setTimestamp(6, Timestamp.from(model.getRegistrationTime()));
+            statement.setDate(5, mapOrNull(model.getBirthDate(), Date::valueOf));
+            statement.setTimestamp(6, mapOrElse(model.getRegistrationTime(), Timestamp::from, Timestamp.from(Instant.now())));
             statement.executeUpdate();
 
             try (ResultSet generated = statement.getGeneratedKeys()){

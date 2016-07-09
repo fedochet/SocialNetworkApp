@@ -3,7 +3,7 @@ CREATE TABLE users(
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  registration_time TIMESTAMP,
+  registration_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   first_name VARCHAR(255),
   last_name VARCHAR(255),
   birth_date DATE
