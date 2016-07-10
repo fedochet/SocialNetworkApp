@@ -10,6 +10,9 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
+import static utils.GeneralUtils.mapOrElse;
+import static utils.GeneralUtils.mapOrNull;
+
 /**
  * Created by roman on 08.07.2016.
  */
@@ -18,17 +21,6 @@ public class H2UserDAO implements UserDAO {
 
     public H2UserDAO(ConnectionPool connectionPool){
         this.connectionPool = connectionPool;
-    }
-
-    private<T,B> B mapOrNull(T valueToCheck, Function<T,B> map) {
-        return mapOrElse(valueToCheck, map, null);
-    }
-
-    private <T,B> B mapOrElse(T valueToCheck, Function<T,B> map, B defaultValue) {
-        if (valueToCheck == null)
-            return defaultValue;
-
-        return map.apply(valueToCheck);
     }
 
     private Optional<User> parseUser(ResultSet resultSet) {

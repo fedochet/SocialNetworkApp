@@ -25,8 +25,8 @@ INSERT INTO post_types(id,name) VALUES
 
 CREATE TABLE posts(
   id INT PRIMARY KEY AUTO_INCREMENT,
-  author INT NOT NULL REFERENCES users(id),
-  creation_date TIMESTAMP,
+  author_id INT NOT NULL REFERENCES users(id),
+  creation_time TIMESTAMP,
   text TEXT,
-  post_type INT DEFAULT 0 REFERENCES post_types(id)
+  post_privacy_type INT DEFAULT 0 REFERENCES post_types(id)
 );
