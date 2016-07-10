@@ -23,6 +23,13 @@ public class H2PostDAO implements PostDAO {
         this.connectionPool = connectionPool;
     }
 
+    private void setUpPost(PreparedStatement statement, Post post) throws SQLException {
+        statement.setInt(1, post.getAuthorId());
+        statement.setTimestamp(2, mapOrElse(post.getCreationTime(), Timestamp::from, Timestamp.from(Instant.now())));
+        statement.setString(3, post.getText());
+        statement.setInt(4, mapOrElse(post.getPostPrivacyType(), PostPrivacyType::getId, PostPrivacyType.DEFAULT.getId()));
+    }
+
     @Override
     public List<Post> getAllByAuthorId(int id) {
         return null;
@@ -42,11 +49,7 @@ public class H2PostDAO implements PostDAO {
             Connection c = connectionPool.getConnection();
             PreparedStatement statement = c.prepareStatement(sql)
         ){
-            statement.setInt(1, post.getAuthorId());
-            statement.setTimestamp(2, mapOrElse(post.getCreationTime(), Timestamp::from, Timestamp.from(Instant.now())));
-            statement.setString(3, post.getText());
-            statement.setInt(4, mapOrElse(post.getPostPrivacyType(), PostPrivacyType::getId, PostPrivacyType.DEFAULT.getId()));
-
+            setUpPost(statement, post);
             statement.execute();
             try (ResultSet set = statement.getGeneratedKeys()){
                 if (set.next()) {
@@ -89,11 +92,24 @@ public class H2PostDAO implements PostDAO {
     }
 
     @Override
-    public boolean update(Post model) {
-        return false;
+    public boolean update(Post post) {
+        String sql = "UPDATE posts SET author_id=?, creation_time=?, text=?, post_privacy_type=? "
+                + "WHERE id=?";
+        try (
+                Connection connection = connectionPool.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            setUpPost(statement, post);
+
+            statement.setInt(5, post.getId());
+            return statement.executeUpdate()>0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
+        @Override
     public boolean deleteById(int id) {
         String sql = "DELETE FROM posts WHERE id=?";
         try (

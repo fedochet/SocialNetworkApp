@@ -70,15 +70,44 @@ public class H2PostDAOTest {
         Post post = new Post();
         post.setAuthorId(testUser.getId());
         post.setPostPrivacyType(PostPrivacyType.DEFAULT);
+        post.setCreationTime(Instant.now());
+        post.setText("post text");
         int postId = postDAO.create(post);
+
+        post.setId(postId);
 
         Optional<Post> postOpt = postDAO.getById(postId);
         assertTrue(postOpt.isPresent());
-        assertThat(postOpt.get().getId(), is(postId));
-        assertThat(postOpt.get().getAuthorId(), is(testUser.getId()));
-        assertThat(postOpt.get().getPostPrivacyType(), is(PostPrivacyType.DEFAULT));
+        assertThat(postOpt.get(),is(post));
 
         assertTrue(postDAO.deleteById(postId));
         assertFalse(postDAO.getById(postId).isPresent());
+    }
+
+    @Test
+    public void afterUpdatePostChanges() {
+        Post post = new Post();
+        post.setAuthorId(testUser.getId());
+        post.setPostPrivacyType(PostPrivacyType.PRIVATE);
+        post.setCreationTime(Instant.now());
+        post.setText("post text");
+
+        int postId = postDAO.create(post);
+        post.setId(postId);
+
+        testUser.setUsername("anotherUsername");
+        int newUserId = userDAO.create(testUser);
+        post.setText("other text");
+        post.setCreationTime(Instant.now());
+        post.setPostPrivacyType(PostPrivacyType.PROTECTED);
+        post.setAuthorId(newUserId);
+
+        assertTrue(postDAO.update(post));
+        Optional<Post> postOpt = postDAO.getById(postId);
+        assertTrue(postOpt.isPresent());
+        assertThat(postOpt.get(), is(post));
+
+        postDAO.deleteById(postId);
+        userDAO.deleteById(newUserId);
     }
 }
