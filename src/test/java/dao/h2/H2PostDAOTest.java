@@ -160,4 +160,44 @@ public class H2PostDAOTest {
 
         postDAO.deleteById(postId);
     }
+
+    @Test
+    public void youCanGetAllPostsOfUser() {
+        User anotherUser = new User();
+        anotherUser.setUsername("test_username");
+        anotherUser.setPassword("test password");
+        anotherUser.setId(userDAO.create(anotherUser));
+
+        Post post1 = new Post();
+        Post post2 = new Post();
+        Post post3 = new Post();
+        Post post4 = new Post();
+        post1.setAuthorId(testUser.getId());
+        post2.setAuthorId(testUser.getId());
+        post3.setAuthorId(testUser.getId());
+        post4.setAuthorId(anotherUser.getId());
+
+        int postId1 = postDAO.create(post1);
+        int postId2 = postDAO.create(post2);
+        int postId3 = postDAO.create(post3);
+        int postId4 = postDAO.create(post4);
+
+
+        assertThat(postDAO.getAllByAuthorId(testUser.getId()).size(), is(3));
+        assertThat(postDAO.getAllByAuthorId(anotherUser.getId()).size(), is(1));
+
+        postDAO.deleteById(postId1);
+        assertThat(postDAO.getAllByAuthorId(testUser.getId()).size(), is(2));
+        assertThat(postDAO.getAllByAuthorId(anotherUser.getId()).size(), is(1));
+
+        postDAO.deleteById(postId4);
+        assertThat(postDAO.getAllByAuthorId(testUser.getId()).size(), is(2));
+        assertTrue(postDAO.getAllByAuthorId(anotherUser.getId()).isEmpty());
+
+        postDAO.deleteById(postId2);
+        postDAO.deleteById(postId3);
+        assertTrue(postDAO.getAllByAuthorId(testUser.getId()).isEmpty());
+
+        userDAO.deleteById(anotherUser.getId());
+    }
 }

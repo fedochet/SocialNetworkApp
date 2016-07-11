@@ -9,5 +9,4 @@ import java.util.List;
  */
 public interface PostDAO extends AbstractDAO<Post>{
     List<Post> getAllByAuthorId(int id);
-    List<Post> getAllByAuthorUsername(String username);
 }

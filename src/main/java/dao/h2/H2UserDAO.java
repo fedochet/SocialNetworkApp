@@ -5,10 +5,8 @@ import dao.interfaces.UserDAO;
 import model.User;
 
 import java.sql.*;
-import java.sql.Date;
 import java.time.Instant;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Optional;
 
 import static utils.GeneralUtils.mapOrElse;
 import static utils.GeneralUtils.mapOrNull;
@@ -23,23 +21,19 @@ public class H2UserDAO implements UserDAO {
         this.connectionPool = connectionPool;
     }
 
-    private Optional<User> parseUser(ResultSet resultSet) {
-        try {
-            if (resultSet.next()) {
-                User user = new User();
-                user.setId(resultSet.getInt("id"));
-                user.setUsername(resultSet.getString("username"));
-                user.setPassword(resultSet.getString("password"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
-                user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
-                user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
-                return Optional.of(user);
-            } else {
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    private Optional<User> parseUser(ResultSet resultSet) throws SQLException {
+        if (resultSet.next()) {
+            User user = new User();
+            user.setId(resultSet.getInt("id"));
+            user.setUsername(resultSet.getString("username"));
+            user.setPassword(resultSet.getString("password"));
+            user.setFirstName(resultSet.getString("first_name"));
+            user.setLastName(resultSet.getString("last_name"));
+            user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
+            user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
+            return Optional.of(user);
+        } else {
+            return Optional.empty();
         }
     }
 

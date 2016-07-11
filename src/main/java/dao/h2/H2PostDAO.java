@@ -1,17 +1,18 @@
 package dao.h2;
 
-import dao.interfaces.PostDAO;
 import common.cp.ConnectionPool;
+import dao.interfaces.PostDAO;
 import model.Post;
 import model.PostPrivacyType;
 
 import java.sql.*;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static utils.GeneralUtils.mapOrElse;
-import static utils.GeneralUtils.mapOrNull;
 
 /**
  * Created by roman on 08.07.2016.
@@ -30,14 +31,47 @@ public class H2PostDAO implements PostDAO {
         statement.setInt(4, mapOrElse(post.getPostPrivacyType(), PostPrivacyType::getId, PostPrivacyType.DEFAULT.getId()));
     }
 
-    @Override
-    public List<Post> getAllByAuthorId(int id) {
-        return null;
+    private Post parsePost(ResultSet resultSet) throws SQLException {
+        Post post = new Post();
+        post.setId(resultSet.getInt("id"));
+        post.setAuthorId(resultSet.getInt("author_id"));
+        post.setCreationTime(resultSet.getTimestamp("creation_time").toInstant());
+        post.setText(resultSet.getString("text"));
+        post.setPostPrivacyType(PostPrivacyType.getTypeByID(resultSet.getInt("post_privacy_type")));
+
+        return post;
+    }
+
+    private Optional<Post> parsePostOpt(ResultSet resultSet) throws SQLException {
+        if (resultSet.next()) return Optional.of(parsePost(resultSet));
+        else return Optional.empty();
+    }
+
+    private List<Post> parsePosts(ResultSet resultSet) throws SQLException {
+        List<Post> posts = new ArrayList<>();
+        while (resultSet.next()) {
+            posts.add(parsePost(resultSet));
+        }
+
+        return Collections.unmodifiableList(posts);
     }
 
     @Override
-    public List<Post> getAllByAuthorUsername(String username) {
-        return null;
+    public List<Post> getAllByAuthorId(int id) {
+        String sql = "SELECT id, author_id, creation_time, text, post_privacy_type FROM posts "
+                + "WHERE author_id=?";
+
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            statement.setInt(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return parsePosts(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -72,19 +106,7 @@ public class H2PostDAO implements PostDAO {
         ){
             statement.setInt(1,id);
             try (ResultSet resultSet = statement.executeQuery()){
-                if (resultSet.next()) {
-                    Post post = new Post();
-                    post.setId(resultSet.getInt("id"));
-                    post.setAuthorId(resultSet.getInt("author_id"));
-                    post.setCreationTime(resultSet.getTimestamp("creation_time").toInstant());
-                    post.setText(resultSet.getString("text"));
-                    post.setPostPrivacyType(PostPrivacyType.getTypeByID(resultSet.getInt("post_privacy_type")));
-
-                    return Optional.of(post);
-                } else {
-                    return Optional.empty();
-                }
-
+                return parsePostOpt(resultSet);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
