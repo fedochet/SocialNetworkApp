@@ -6,6 +6,7 @@ import model.Post;
 import model.PostPrivacyType;
 import model.User;
 import org.junit.*;
+import org.junit.rules.ExpectedException;
 import utils.SQLUtils;
 
 import java.time.Instant;
@@ -109,5 +110,54 @@ public class H2PostDAOTest {
 
         postDAO.deleteById(postId);
         userDAO.deleteById(newUserId);
+    }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void authorMustExist() {
+        Post post = new Post();
+        post.setPostPrivacyType(PostPrivacyType.PRIVATE);
+        post.setCreationTime(Instant.now());
+        post.setText("post text");
+        post.setAuthorId(-1);
+
+        thrown.expect(RuntimeException.class);
+        postDAO.create(post);
+    }
+
+    @Test
+    public void ifPrivacyIsNotSetItsDefault() {
+        Post post = new Post();
+        post.setPostPrivacyType(null);
+        post.setCreationTime(Instant.now());
+        post.setText("post text");
+        post.setAuthorId(testUser.getId());
+
+        int postId = postDAO.create(post);
+
+        Optional<Post> postOpt = postDAO.getById(postId);
+        assertTrue(postOpt.isPresent());
+        assertThat(postOpt.get().getPostPrivacyType(), is(PostPrivacyType.DEFAULT));
+
+        postDAO.deleteById(postId);
+    }
+
+    @Test
+    public void ifCreationTimeNotSetItsNow() {
+        Post post = new Post();
+        post.setPostPrivacyType(PostPrivacyType.DEFAULT);
+        post.setCreationTime(null);
+        post.setText("post text");
+        post.setAuthorId(testUser.getId());
+
+        int postId = postDAO.create(post);
+
+        Optional<Post> postOpt = postDAO.getById(postId);
+        assertTrue(postOpt.isPresent());
+        assertTrue(postOpt.get().getCreationTime().getEpochSecond()<=Instant.now().getEpochSecond());
+
+        postDAO.deleteById(postId);
     }
 }
