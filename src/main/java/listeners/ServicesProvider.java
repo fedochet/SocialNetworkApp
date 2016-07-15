@@ -21,7 +21,7 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class ServicesProvider implements ServletContextListener {
 
-    private static final String RESOURCES_FILE_PATH = "/WEB-INF/classes/";
+    private static final String RESOURCES_FILE_PATH = "/WEB-INF/resources/";
     private static final String DB_PROPERTIES_FILE_NAME = "db.properties";
     private static final String DB_PREPARE_FILE_NAME = "001_initial_db_structure.sql";
 

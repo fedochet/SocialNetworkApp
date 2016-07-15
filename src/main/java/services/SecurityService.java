@@ -8,13 +8,13 @@ import java.security.SecureRandom;
  * Created by roman on 13.07.2016.
  */
 public class SecurityService {
-    private static final MessageDigest hashFunction;
-    private static final SecureRandom random;
+    private final MessageDigest hashFunction;
+    private final SecureRandom random;
 
     // length of salt in hex string representation
-    private static final int SALT_LENGTH = 128;
+    private static final int SALT_LENGTH = 32;
 
-    static {
+    {
         try {
             hashFunction = MessageDigest.getInstance("SHA-256");
             random = SecureRandom.getInstance("SHA1PRNG");

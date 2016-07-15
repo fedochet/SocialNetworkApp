@@ -23,8 +23,8 @@ public class SimpleConnectionPool implements ConnectionPool{
     public static ConnectionPool create(String propertiesFile) {
         try (InputStream stream = new FileInputStream(propertiesFile)) {
             return create(stream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException | NullPointerException e) {
+            throw new RuntimeException("Can't open file: " + propertiesFile, e);
         }
     }
 

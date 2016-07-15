@@ -1,3 +1,7 @@
+plugins {
+    id "org.akhikhl.gretty" version "1.2.4"
+}
+
 group 'anstreth'
 version '1.0-SNAPSHOT'
 
@@ -15,6 +19,12 @@ dependencies {
     compile "org.projectlombok:lombok:1.16.8"
     compile group: 'com.h2database', name: 'h2', version: '1.4.192'
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0-b01'
-
+    compile 'javax.servlet.jsp.jstl:javax.servlet.jsp.jstl-api:+'
+    compile 'org.glassfish.web:javax.servlet.jsp.jstl:+'
 }
 
+
+gretty {
+    port = 8080
+    contextPath = '/'
+}
