@@ -1,7 +1,6 @@
 package common.cp;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -21,16 +20,12 @@ public class SimpleConnectionPool implements ConnectionPool{
     private BlockingQueue<Connection> reservedConnections;
     private volatile boolean isClosing = false;
 
-    private static InputStream getInputStream(String file){
-        try {
-            return new FileInputStream(file);
-        } catch (FileNotFoundException e) {
+    public static ConnectionPool create(String propertiesFile) {
+        try (InputStream stream = new FileInputStream(propertiesFile)) {
+            return create(stream);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static ConnectionPool create(String propertiesFile) {
-        return create(getInputStream(propertiesFile));
     }
 
     private static ConnectionPool create(InputStream stream) {
