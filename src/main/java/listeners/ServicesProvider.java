@@ -34,8 +34,9 @@ public class ServicesProvider implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext servletContext = sce.getServletContext();
+        String propertiesFilePath = servletContext.getRealPath(RESOURCES_FILE_PATH + DB_PROPERTIES_FILE_NAME);
 
-        connectionPool = SimpleConnectionPool.create(RESOURCES_FILE_PATH + DB_PROPERTIES_FILE_NAME);
+        connectionPool = SimpleConnectionPool.create(propertiesFilePath);
         UserDAO userDAO = new H2UserDAO(connectionPool);
         PostDAO postDAO = new H2PostDAO(connectionPool);
         SecurityService securityService = new SecurityService();
@@ -44,7 +45,8 @@ public class ServicesProvider implements ServletContextListener {
         servletContext.setAttribute(POST_DAO, postDAO);
         servletContext.setAttribute(SECURITY_SERVICE, securityService);
 
-        SQLUtils.executeScript(connectionPool, RESOURCES_FILE_PATH+DB_PREPARE_FILE_NAME);
+        String scriptFilePath = servletContext.getRealPath(RESOURCES_FILE_PATH + DB_PREPARE_FILE_NAME);
+        SQLUtils.executeScript(connectionPool, scriptFilePath);
     }
 
     @Override
