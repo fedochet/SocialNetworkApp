@@ -16,9 +16,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.Enumeration;
 
 import static utils.GeneralUtils.mapOrNull;
+import static utils.HttpServletUtils.removeSessionAttributes;
 
 /**
  * Created by roman on 14.07.2016.
@@ -69,7 +69,7 @@ public class RegistrationServlet extends HttpServlet {
                 userDAO.create(user);
                 user = userDAO.getByUsername(username).orElseThrow(RuntimeException::new);
 
-                cleanSession(session);
+                removeSessionAttributes(session);
                 session.setAttribute("user", user);
                 resp.sendRedirect("");
             } catch (RuntimeException e) {
@@ -82,19 +82,12 @@ public class RegistrationServlet extends HttpServlet {
 
     private void refuseRegistration(HttpServletRequest request, HttpServletResponse response, User user, String reason) throws IOException {
         HttpSession session = request.getSession();
-        cleanSession(session);
+        removeSessionAttributes(session);
         session.setAttribute("error_message", reason);
         session.setAttribute("j_username", user.getUsername());
         session.setAttribute("first_name", user.getFirstName());
         session.setAttribute("last_name", user.getLastName());
         session.setAttribute("birth_date", mapOrNull(user.getBirthDate(), LocalDate::toString));
         response.sendRedirect("registration");
-    }
-
-    private void cleanSession(HttpSession session) {
-        Enumeration<String> attributeNames = session.getAttributeNames();
-        while (attributeNames.hasMoreElements()) {
-            session.removeAttribute(attributeNames.nextElement());
-        }
     }
 }
