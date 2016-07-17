@@ -19,7 +19,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 import static utils.GeneralUtils.mapOrNull;
-import static utils.HttpServletUtils.removeSessionAttributes;
 
 /**
  * Created by roman on 14.07.2016.
@@ -58,6 +57,7 @@ public class RegistrationServlet extends HttpServlet {
             birthDate = null;
         }
         String password = req.getParameter("j_password");
+
         User user = new User();
         user.setUsername(username);
         user.setFirstName(firstName);
@@ -72,7 +72,6 @@ public class RegistrationServlet extends HttpServlet {
                 userDAO.create(user);
                 user = userDAO.getByUsername(username).orElseThrow(RuntimeException::new);
 
-                removeSessionAttributes(session);
                 session.setAttribute("user", user);
                 resp.sendRedirect(nextURL);
             } catch (RuntimeException e) {

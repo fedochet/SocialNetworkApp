@@ -9,18 +9,15 @@
 <body>
 <h1>Awesome social network</h1>
 <h2>Registration page</h2>
-<c:if test="${error_message == null}">
-    ${error_message}
-</c:if>
 <form action="registration" method="post">
     Username:<br>
-    <input type="text" name="j_username" required value="${j_username}"><br>
+    <input type="text" name="j_username" required><br>
     First name:<br>
-    <input type="text" name="first_name" value="${first_name}"><br>
+    <input type="text" name="first_name"><br>
     Last name:<br>
-    <input type="text" name="last_name" value="${last_name}"><br>
+    <input type="text" name="last_name"><br>
     Birth date:<br>
-    <input type="date" name="birth_date" value="${birth_date}"><br> <br>
+    <input type="date" name="birth_date"><br> <br>
     Password: <br>
     <input type="password" name="j_password" required><br>
     Password again:<br>

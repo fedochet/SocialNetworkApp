@@ -15,8 +15,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
-import static utils.HttpServletUtils.removeSessionAttributes;
-
 /**
  * Created by roman on 16.07.2016.
  */
@@ -49,7 +47,6 @@ public class LoginServlet extends HttpServlet {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             if (securityService.validatePassword(password, user.getPassword())) {
-                removeSessionAttributes(session);
                 session.setAttribute("user", user);
                 resp.sendRedirect(nextURL);
             } else {
