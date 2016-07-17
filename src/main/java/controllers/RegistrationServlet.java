@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 
 import static utils.GeneralUtils.mapOrNull;
 import static utils.HttpServletUtils.removeSessionAttributes;
@@ -64,6 +65,8 @@ public class RegistrationServlet extends HttpServlet {
         user.setPassword(securityService.encryptPassword(password));
         user.setBirthDate(birthDate);
 
+        String nextURL = Optional.ofNullable((String)session.getAttribute("next")).orElse("/");
+
         if (!userDAO.getByUsername(username).isPresent()) {
             try {
                 userDAO.create(user);
@@ -71,7 +74,7 @@ public class RegistrationServlet extends HttpServlet {
 
                 removeSessionAttributes(session);
                 session.setAttribute("user", user);
-                resp.sendRedirect("");
+                resp.sendRedirect(nextURL);
             } catch (RuntimeException e) {
                 resp.sendError(500, "Error while saving user; try again");
             }

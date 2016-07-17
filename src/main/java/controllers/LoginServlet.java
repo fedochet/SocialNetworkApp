@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
 
         String username = req.getParameter("j_username");
         String password = req.getParameter("j_password");
-        String nextURL = Optional.ofNullable((String)session.getAttribute("next")).orElse("");
+        String nextURL = Optional.ofNullable((String)session.getAttribute("next")).orElse("/");
 
         Optional<User> userOpt = userDAO.getByUsername(username);
         if (userOpt.isPresent()) {
