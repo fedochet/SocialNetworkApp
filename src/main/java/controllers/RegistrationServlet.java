@@ -73,21 +73,10 @@ public class RegistrationServlet extends HttpServlet {
                 session.setAttribute("user", user);
                 resp.sendRedirect("");
             } catch (RuntimeException e) {
-                refuseRegistration(req, resp, user, "Some error occured; user not created.");
+                resp.sendError(500, "Error while saving user; try again");
             }
         } else {
-            refuseRegistration(req, resp, user, "This username is already used!");
+            resp.sendError(406, "This username is already used");
         }
-    }
-
-    private void refuseRegistration(HttpServletRequest request, HttpServletResponse response, User user, String reason) throws IOException {
-        HttpSession session = request.getSession();
-        removeSessionAttributes(session);
-        session.setAttribute("error_message", reason);
-        session.setAttribute("j_username", user.getUsername());
-        session.setAttribute("first_name", user.getFirstName());
-        session.setAttribute("last_name", user.getLastName());
-        session.setAttribute("birth_date", mapOrNull(user.getBirthDate(), LocalDate::toString));
-        response.sendRedirect("registration");
     }
 }
