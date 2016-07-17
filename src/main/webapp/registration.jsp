@@ -9,10 +9,10 @@
 <body>
 <h1>Awesome social network</h1>
 <h2>Registration page</h2>
-<c:if test="${error_message!=null}">
+<c:if test="${error_message == null}">
     ${error_message}
 </c:if>
-<form method="post">
+<form action="registration" method="post">
     Username:<br>
     <input type="text" name="j_username" required value="${j_username}"><br>
     First name:<br>

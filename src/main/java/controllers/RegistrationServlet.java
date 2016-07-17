@@ -24,7 +24,7 @@ import static utils.HttpServletUtils.removeSessionAttributes;
  * Created by roman on 14.07.2016.
  */
 
-@WebServlet(urlPatterns = {"/registration"})
+@WebServlet(urlPatterns = "/registration")
 public class RegistrationServlet extends HttpServlet {
 
     private UserDAO userDAO;
