@@ -4,6 +4,7 @@ import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
 import model.User;
 import services.SecurityService;
+import validators.UsernameValidator;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -40,7 +41,7 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("registration.jsp").forward(req,resp);
+        req.getRequestDispatcher("registration.jsp").forward(req, resp);
     }
 
     @Override
@@ -58,6 +59,16 @@ public class RegistrationServlet extends HttpServlet {
         }
         String password = req.getParameter("j_password");
 
+        if (!UsernameValidator.validate(username)) {
+            resp.sendError(406, "This username is not valid");
+            return;
+        }
+
+        if (userDAO.getByUsername(username).isPresent()) {
+            resp.sendError(406, "This username is already used");
+            return;
+        }
+
         User user = new User();
         user.setUsername(username);
         user.setFirstName(firstName);
@@ -65,20 +76,16 @@ public class RegistrationServlet extends HttpServlet {
         user.setPassword(securityService.encryptPassword(password));
         user.setBirthDate(birthDate);
 
-        String nextURL = Optional.ofNullable((String)session.getAttribute("next")).orElse("/");
+        String nextURL = Optional.ofNullable((String) session.getAttribute("next")).orElse("/");
 
-        if (!userDAO.getByUsername(username).isPresent()) {
-            try {
-                userDAO.create(user);
-                user = userDAO.getByUsername(username).orElseThrow(RuntimeException::new);
+        try {
+            userDAO.create(user);
+            user = userDAO.getByUsername(username).orElseThrow(RuntimeException::new);
 
-                session.setAttribute("user", user);
-                resp.sendRedirect(nextURL);
-            } catch (RuntimeException e) {
-                resp.sendError(500, "Error while saving user; try again");
-            }
-        } else {
-            resp.sendError(406, "This username is already used");
+            session.setAttribute("user", user);
+            resp.sendRedirect(nextURL);
+        } catch (RuntimeException e) {
+            resp.sendError(500, "Error while saving user; try again");
         }
     }
 }

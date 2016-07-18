@@ -41,19 +41,21 @@ public class LoginServlet extends HttpServlet {
 
         String username = req.getParameter("j_username");
         String password = req.getParameter("j_password");
-        String nextURL = Optional.ofNullable((String)session.getAttribute("next")).orElse("/");
+        String nextURL = Optional.ofNullable((String) session.getAttribute("next")).orElse("/");
 
         Optional<User> userOpt = userDAO.getByUsername(username);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (securityService.validatePassword(password, user.getPassword())) {
-                session.setAttribute("user", user);
-                resp.sendRedirect(nextURL);
-            } else {
-                resp.sendError(406, "Wrong password");
-            }
-        } else {
+
+        if (!userOpt.isPresent()) {
             resp.sendError(406, "Wrong username");
+            return;
+        }
+
+        User user = userOpt.get();
+        if (securityService.validatePassword(password, user.getPassword())) {
+            session.setAttribute("user", user);
+            resp.sendRedirect(nextURL);
+        } else {
+            resp.sendError(406, "Wrong password");
         }
     }
 }
