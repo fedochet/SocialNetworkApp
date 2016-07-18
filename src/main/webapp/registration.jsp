@@ -1,11 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml"
->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<fmt:setLocale value="${sessionScope.local}"/>
 <head>
-    <title>Registration </title>
+    <title>Registration</title>
 </head>
-
 <body>
 <h1>Awesome social network</h1>
 <h2>Registration page</h2>
@@ -24,5 +24,6 @@
     <input type="password" name="j_password_test" required> <br><br>
     <input type="submit" name="Submit">
 </form>
+Have account already? Go to the <a href="login">login page</a>!
 </body>
 </html>
