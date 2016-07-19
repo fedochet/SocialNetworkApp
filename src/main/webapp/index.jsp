@@ -14,5 +14,8 @@
   <body>
   <jsp:useBean id="user" scope="session" type="model.User"/>
   Привет, ${user.username}!
+  <div>
+    <a href="<c:url value="/logout"/>">Logout</a>
+  </div>
   </body>
 </html>
