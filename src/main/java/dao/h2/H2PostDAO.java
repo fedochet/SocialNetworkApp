@@ -81,7 +81,7 @@ public class H2PostDAO implements PostDAO {
 
         try (
             Connection c = connectionPool.getConnection();
-            PreparedStatement statement = c.prepareStatement(sql)
+            PreparedStatement statement = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
         ){
             setUpPost(statement, post);
             statement.execute();

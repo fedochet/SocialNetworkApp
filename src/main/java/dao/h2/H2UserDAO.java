@@ -70,11 +70,11 @@ public class H2UserDAO implements UserDAO {
                 "VALUES (?,?,?,?,?,?)";
         try (
                 Connection c = connectionPool.getConnection();
-                PreparedStatement statement = c.prepareStatement(sql)
+                PreparedStatement statement = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
         ) {
             setUpUser(statement, model);
             statement.executeUpdate();
-
+            
             try (ResultSet generated = statement.getGeneratedKeys()){
                 if (generated.next()) {
                     return generated.getInt(1);
