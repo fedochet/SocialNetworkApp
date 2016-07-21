@@ -80,7 +80,7 @@ public class RegistrationServlet extends HttpServlet {
             userDAO.create(user);
             user = userDAO.getByUsername(username).orElseThrow(RuntimeException::new);
 
-            session.setAttribute("user", user);
+            session.setAttribute("sessionUser", user);
             resp.sendRedirect(nextURL);
         } catch (RuntimeException e) {
             resp.sendError(500, "Error while saving user; try again");

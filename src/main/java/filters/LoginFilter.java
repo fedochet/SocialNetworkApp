@@ -32,7 +32,7 @@ public class LoginFilter implements Filter {
     }
 
     private Optional<User> getUser(HttpSession session) {
-        return Optional.ofNullable((User) session.getAttribute("user"));
+        return Optional.ofNullable((User) session.getAttribute("sessionUser"));
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -49,12 +49,12 @@ public class LoginFilter implements Filter {
                 .flatMap(userDAO::getById);
 
         if (userOpt.isPresent()) {
-            request.getSession().setAttribute("user", userOpt.get());
+            request.getSession().setAttribute("sessionUser", userOpt.get());
             chain.doFilter(request, response);
             return;
         }
 
-        request.getSession().removeAttribute("user");
+        request.getSession().removeAttribute("sessionUser");
         request.getRequestDispatcher("login").forward(request, response);
     }
 
