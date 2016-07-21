@@ -5,7 +5,6 @@ import listeners.ServicesProvider;
 import model.User;
 import services.SecurityService;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,8 +23,7 @@ public class LoginServlet extends HttpServlet {
     private UserDAO userDAO;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+    public void init() throws ServletException {
         securityService = (SecurityService) getServletContext().getAttribute(ServicesProvider.SECURITY_SERVICE);
         userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
     }

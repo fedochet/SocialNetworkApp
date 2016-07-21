@@ -6,7 +6,6 @@ import model.User;
 import services.SecurityService;
 import validators.UsernameValidator;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,8 +31,7 @@ public class RegistrationServlet extends HttpServlet {
     private SecurityService securityService;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+    public void init() throws ServletException {
         ServletContext context = getServletContext();
         userDAO = (UserDAO) context.getAttribute(ServicesProvider.USER_DAO);
         securityService = (SecurityService) context.getAttribute(ServicesProvider.SECURITY_SERVICE);
