@@ -39,25 +39,27 @@ public class LoginFilter implements Filter {
         String requestURI = request.getRequestURI();
         if (Objects.equals(requestURI, "/login") || Objects.equals(requestURI, "/registration")) {
             chain.doFilter(request, response);
-        } else {
-            Optional<User> userOpt
-                    = Optional.ofNullable(request.getSession())
-                    .flatMap(this::getUser)
-                    .map(User::getId)
-                    .flatMap(userDAO::getById);
-
-            if (userOpt.isPresent()) {
-                request.getSession().setAttribute("user", userOpt.get());
-                chain.doFilter(request, response);
-            } else {
-                request.getSession().removeAttribute("user");
-                request.getRequestDispatcher("login").forward(request, response);
-            }
+            return;
         }
+
+        Optional<User> userOpt
+                = Optional.ofNullable(request.getSession())
+                .flatMap(this::getUser)
+                .map(User::getId)
+                .flatMap(userDAO::getById);
+
+        if (userOpt.isPresent()) {
+            request.getSession().setAttribute("user", userOpt.get());
+            chain.doFilter(request, response);
+            return;
+        }
+
+        request.getSession().removeAttribute("user");
+        request.getRequestDispatcher("login").forward(request, response);
     }
 
 
-        @Override
+    @Override
     public void destroy() {
 
     }
