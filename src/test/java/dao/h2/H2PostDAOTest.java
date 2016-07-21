@@ -11,7 +11,8 @@ import utils.SQLUtils;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -182,22 +183,65 @@ public class H2PostDAOTest {
         int postId3 = postDAO.create(post3);
         int postId4 = postDAO.create(post4);
 
+        assertThat("Posts are in wrong order!", postDAO.getByAuthorId(testUser.getId())
+                        .stream()
+                        .sorted(Comparator.comparing(Post::getCreationTime).thenComparing(Post::getId))
+                        .collect(Collectors.toList()),
+                is(postDAO.getByAuthorId(testUser.getId())));
 
-        assertThat(postDAO.getAllByAuthorId(testUser.getId()).size(), is(3));
-        assertThat(postDAO.getAllByAuthorId(anotherUser.getId()).size(), is(1));
+        assertThat(postDAO.getByAuthorId(testUser.getId()).size(), is(3));
+        assertThat(postDAO.getByAuthorId(anotherUser.getId()).size(), is(1));
 
         postDAO.deleteById(postId1);
-        assertThat(postDAO.getAllByAuthorId(testUser.getId()).size(), is(2));
-        assertThat(postDAO.getAllByAuthorId(anotherUser.getId()).size(), is(1));
+        assertThat(postDAO.getByAuthorId(testUser.getId()).size(), is(2));
+        assertThat(postDAO.getByAuthorId(anotherUser.getId()).size(), is(1));
 
         postDAO.deleteById(postId4);
-        assertThat(postDAO.getAllByAuthorId(testUser.getId()).size(), is(2));
-        assertTrue(postDAO.getAllByAuthorId(anotherUser.getId()).isEmpty());
+        assertThat(postDAO.getByAuthorId(testUser.getId()).size(), is(2));
+        assertTrue(postDAO.getByAuthorId(anotherUser.getId()).isEmpty());
 
         postDAO.deleteById(postId2);
         postDAO.deleteById(postId3);
-        assertTrue(postDAO.getAllByAuthorId(testUser.getId()).isEmpty());
+        assertTrue(postDAO.getByAuthorId(testUser.getId()).isEmpty());
+
+
 
         userDAO.deleteById(anotherUser.getId());
+    }
+
+    @Test
+    public void youCanGetPostsWithOffsetAndLimit() {
+        Set<Integer> newPosts = new HashSet<>();
+
+        for (int i = 0; i<100; i++) {
+            Post post = new Post();
+            post.setAuthorId(testUser.getId());
+
+            newPosts.add(postDAO.create(post));
+        }
+
+        List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
+        assertThat(allPosts.size(), is(100));
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), 0, 100),
+                is(allPosts));
+
+        List<Post> first50posts = postDAO.getByAuthorId(testUser.getId(), 0, 50);
+        assertThat(first50posts.size(), is(50));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), 0, 50),
+                is(allPosts.subList(0, 50)));
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), 50, 20), is(allPosts.subList(50,70)));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), 80, 100), is(allPosts.subList(80,100)));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), 100, 1000).size(), is(0));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), 200, 1000).size(), is(0));
+
+        assertThat("Posts are in wrong order!", postDAO.getByAuthorId(testUser.getId(),0, 100)
+                .stream()
+                .sorted(Comparator.comparing(Post::getCreationTime).thenComparing(Post::getId))
+                .collect(Collectors.toList()),
+            is(allPosts));
+
+        newPosts.forEach(postDAO::deleteById);
     }
 }

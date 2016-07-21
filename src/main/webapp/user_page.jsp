@@ -7,13 +7,13 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:useBean id="sessionUser" scope="session" type="model.User"/>
+<jsp:useBean id="pageUser" scope="request" type="model.User"/>
 <html>
 <head>
-    <title>User page!</title>
+    <title>${pageUser.username}</title>
 </head>
 <body>
-    <jsp:useBean id="sessionUser" scope="session" type="model.User"/>
-    <jsp:useBean id="pageUser" scope="request" type="model.User"/>
     <div>
         <p>
             Welcome to page of ${pageUser.username}!

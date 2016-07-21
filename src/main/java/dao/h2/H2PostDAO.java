@@ -57,15 +57,39 @@ public class H2PostDAO implements PostDAO {
     }
 
     @Override
-    public List<Post> getAllByAuthorId(int id) {
+    public List<Post> getByAuthorId(int id) {
         String sql = "SELECT id, author_id, creation_time, text, post_privacy_type FROM posts "
-                + "WHERE author_id=?";
+                + "WHERE author_id=? "
+                + "ORDER BY creation_time ASC, id ASC";
 
         try (
                 Connection c = connectionPool.getConnection();
                 PreparedStatement statement = c.prepareStatement(sql)
         ) {
             statement.setInt(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                return parsePosts(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Post> getByAuthorId(int id, int offset, int limit) {
+        String sql = "SELECT id, author_id, creation_time, text, post_privacy_type FROM posts "
+                + "WHERE author_id=? "
+                + "ORDER BY creation_time ASC, id ASC "
+                + "LIMIT ? OFFSET ? ";
+
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            statement.setInt(1, id);
+            statement.setInt(2, limit);
+            statement.setInt(3, offset);
+
             try(ResultSet resultSet = statement.executeQuery()) {
                 return parsePosts(resultSet);
             }
