@@ -24,6 +24,6 @@
     <input type="password" name="j_password_test" required> <br><br>
     <input type="submit" name="Submit">
 </form>
-Have account already? Go to the <a href="login">login page</a>!
+Have account already? Go to the <a href="<c:url value="/login"/>">login page</a>!
 </body>
 </html>

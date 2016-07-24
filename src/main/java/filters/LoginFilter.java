@@ -55,7 +55,7 @@ public class LoginFilter implements Filter {
         }
 
         request.getSession().removeAttribute("sessionUser");
-        request.getRequestDispatcher("login").forward(request, response);
+        request.getRequestDispatcher("/login").forward(request, response);
     }
 
 

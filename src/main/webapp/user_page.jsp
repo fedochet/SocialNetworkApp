@@ -66,7 +66,7 @@
             <h1>Posts</h1>
             <div class="well wall-post row">
                 <div class="col-xs-2">
-                    <img src="images/avatar.png" class="user-avatar-post">
+                    <img src="images/avatar.png" class="user-post-avatar">
                 </div>
                 <div class="col-xs-10">
                     <strong>@slowpoke </strong>two hours ago
@@ -78,7 +78,7 @@
             </div>
             <div class="well wall-post row">
                 <div class="col-xs-2">
-                    <img src="images/avatar.png" class="user-avatar-post">
+                    <img src="images/avatar.png" class="user-post-avatar">
                 </div>
                 <div class="col-xs-10">
                     <strong>@slowpoke </strong>two hours ago
