@@ -2,16 +2,7 @@ body {
   font-size: 16px;
 }
 
-#logo-img {
-  width: 100px;
-  height: 100px;
-}
-
-#user-info {
-
-}
-
-#user-avatar {
+#user-avatar-main {
   height: 100px;
   width: 100px;
   margin: 0 20px 20px 0;

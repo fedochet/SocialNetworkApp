@@ -18,10 +18,6 @@
     <link rel="stylesheet" href="<c:url value="/css/bootstrap.min.css"/>">
     <link rel="stylesheet" href="<c:url value="/css/styles.css"/>">
 
-    <script src="js/jquery-2.1.4.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/script.js"></script>
-
     <title>John Doe</title>
 </head>
 <body>
@@ -70,7 +66,7 @@
             <h1>Posts</h1>
             <div class="well wall-post row">
                 <div class="col-xs-2">
-                    <img src="images/avatar.png" id="user-avatar-post">
+                    <img src="images/avatar.png" class="user-avatar-post">
                 </div>
                 <div class="col-xs-10">
                     <strong>@slowpoke </strong>two hours ago
@@ -82,7 +78,7 @@
             </div>
             <div class="well wall-post row">
                 <div class="col-xs-2">
-                    <img src="images/avatar.png" id="user-avatar">
+                    <img src="images/avatar.png" class="user-avatar-post">
                 </div>
                 <div class="col-xs-10">
                     <strong>@slowpoke </strong>two hours ago
@@ -94,8 +90,12 @@
             </div>
         </div>
     </div>
-
 </div>
+
+<script src="<c:url value="/js/jquery-2.1.4.min.js"/>"></script>
+<script src="<c:url value="/js/bootstrap.min.js"/>"></script>
+<script src="<c:url value="/js/script.js"/>"></script>
+
 </body>
 </html>
 
