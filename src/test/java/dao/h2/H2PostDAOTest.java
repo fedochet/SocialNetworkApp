@@ -129,6 +129,17 @@ public class H2PostDAOTest {
     }
 
     @Test
+    public void textCanBeNull() {
+        Post post = new Post();
+        post.setAuthorId(testUser.getId());
+        post.setPostPrivacyType(PostPrivacyType.DEFAULT);
+        post.setText(null);
+
+        int postId = postDAO.create(post);
+        assertTrue(postDAO.deleteById(postId));
+    }
+
+    @Test
     public void ifPrivacyIsNotSetItsDefault() {
         Post post = new Post();
         post.setPostPrivacyType(null);
