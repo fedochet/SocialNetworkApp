@@ -13,7 +13,7 @@
     <title>Add new post!</title>
 </head>
 <body>
-<form action="addpost" method="post">
+<form action="<c:url value="/addpost"/>" method="post">
     <textarea name="text" rows="10" cols="30" required></textarea><br>
     <select name="post_privacy_type" required>
         <c:forEach items="<%=PostPrivacyType.values()%>" var="entry">

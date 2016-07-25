@@ -9,7 +9,7 @@
 <body>
 <h1>Awesome social network</h1>
 <h2>Registration page</h2>
-<form action="registration" method="post">
+<form action="<c:url value="/registration"/>" method="post">
     Username:<br>
     <input type="text" name="j_username" required><br>
     First name:<br>

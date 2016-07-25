@@ -1,5 +1,6 @@
 package controllers;
 
+import dao.interfaces.PostDAO;
 import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
 import model.User;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @WebServlet(urlPatterns = "/user/*")
 public class UserPageServlet extends HttpServlet {
     private UserDAO userDAO;
+    private PostDAO postDAO;
 
     private static String removeLeadingSlash(String path) {
         return path.substring(1);
@@ -27,6 +29,7 @@ public class UserPageServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
+        postDAO = (PostDAO) getServletContext().getAttribute(ServicesProvider.POST_DAO);
     }
 
     @Override
@@ -43,6 +46,7 @@ public class UserPageServlet extends HttpServlet {
         }
 
         req.setAttribute("pageUser", userOpt.get());
+        req.setAttribute("pageUserPosts", postDAO.getByAuthorId(userOpt.get().getId()));
         req.getRequestDispatcher("/user_page.jsp").forward(req, resp);
     }
 }
