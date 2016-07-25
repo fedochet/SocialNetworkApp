@@ -12,7 +12,7 @@
     <title>Привет!</title>
   </head>
   <body>
-  <jsp:useBean id="sessionUser" scope="session" type="model.User"/>
+  <jsp:useBean id="sessionUser" scope="session" type="model.User" class="model.User"/>
   Привет, ${sessionUser.username}!
   <div>
     <a href="<c:url value="/logout"/>">Logout</a>

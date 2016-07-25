@@ -21,6 +21,13 @@ dependencies {
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0-b01'
     compile 'javax.servlet.jsp.jstl:javax.servlet.jsp.jstl-api:+'
     compile 'org.glassfish.web:javax.servlet.jsp.jstl:+'
+
+    // Jersey
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:+'
+    compile 'org.glassfish.jersey.media:jersey-media-moxy:+'
+
+    // Jackson
+    compile 'com.fasterxml.jackson.core:jackson-databind:+'
 }
 
 

@@ -17,7 +17,7 @@ import java.util.Optional;
  * Created by roman on 17.07.2016.
  */
 
-@WebFilter("/*")
+@WebFilter(urlPatterns = {"/"})
 public class LoginFilter implements Filter {
     private static UserDAO userDAO;
 

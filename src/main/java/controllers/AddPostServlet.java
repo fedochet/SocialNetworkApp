@@ -19,7 +19,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = "/addpost")
 public class AddPostServlet extends HttpServlet {
-    PostDAO postDAO;
+    private PostDAO postDAO;
 
     @Override
     public void init() throws ServletException {
