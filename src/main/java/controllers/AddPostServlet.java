@@ -36,7 +36,13 @@ public class AddPostServlet extends HttpServlet {
         User user = (User) req.getSession().getAttribute("sessionUser");
 
         String text = req.getParameter("text");
-        PostPrivacyType privacyType = PostPrivacyType.getTypeByID(Integer.parseInt(req.getParameter("post_privacy_type")));
+
+        PostPrivacyType privacyType;
+        try {
+            privacyType = PostPrivacyType.getTypeByID(Integer.parseInt(req.getParameter("post_privacy_type")));
+        } catch (IllegalArgumentException e) {
+            privacyType = PostPrivacyType.DEFAULT;
+        }
 
         try {
             Post post = new Post();
