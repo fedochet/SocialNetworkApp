@@ -60,7 +60,7 @@ public class H2PostDAO implements PostDAO {
     public List<Post> getByAuthorId(int id) {
         String sql = "SELECT id, author_id, creation_time, text, post_privacy_type FROM posts "
                 + "WHERE author_id=? "
-                + "ORDER BY creation_time ASC, id ASC";
+                + "ORDER BY creation_time DESC, id DESC";
 
         try (
                 Connection c = connectionPool.getConnection();
@@ -79,7 +79,7 @@ public class H2PostDAO implements PostDAO {
     public List<Post> getByAuthorId(int id, int offset, int limit) {
         String sql = "SELECT id, author_id, creation_time, text, post_privacy_type FROM posts "
                 + "WHERE author_id=? "
-                + "ORDER BY creation_time ASC, id ASC "
+                + "ORDER BY creation_time DESC, id DESC "
                 + "LIMIT ? OFFSET ? ";
 
         try (

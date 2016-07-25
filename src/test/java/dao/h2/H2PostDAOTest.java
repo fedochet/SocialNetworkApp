@@ -196,7 +196,7 @@ public class H2PostDAOTest {
 
         assertThat("Posts are in wrong order!", postDAO.getByAuthorId(testUser.getId())
                         .stream()
-                        .sorted(Comparator.comparing(Post::getCreationTime).thenComparing(Post::getId))
+                        .sorted(Comparator.comparing(Post::getCreationTime).thenComparing(Post::getId).reversed())
                         .collect(Collectors.toList()),
                 is(postDAO.getByAuthorId(testUser.getId())));
 
@@ -249,7 +249,7 @@ public class H2PostDAOTest {
 
         assertThat("Posts are in wrong order!", postDAO.getByAuthorId(testUser.getId(),0, 100)
                 .stream()
-                .sorted(Comparator.comparing(Post::getCreationTime).thenComparing(Post::getId))
+                .sorted(Comparator.comparing(Post::getCreationTime).thenComparing(Post::getId).reversed())
                 .collect(Collectors.toList()),
             is(allPosts));
 
