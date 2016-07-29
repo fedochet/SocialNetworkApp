@@ -9,7 +9,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:useBean id="sessionUser" scope="session" type="model.User"/>
 <jsp:useBean id="pageUser" scope="request" type="model.User"/>
-<jsp:useBean id="pageUserPosts" scope="request" type="java.util.List<model.Post>"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -23,6 +22,8 @@
 </head>
 <body>
 <header>
+    <div hidden id="pageUserId">${pageUser.id}</div>
+
     <nav id="header-nav" class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="navbar-header">
