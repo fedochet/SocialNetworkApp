@@ -26,7 +26,7 @@
     <nav id="header-nav" class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="<c:url value="/index.jsp"/>">My awesome social network</a>
+                <a class="navbar-brand" href="<c:url value="/landing_page.jsp"/>">My awesome social network</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">

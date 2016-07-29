@@ -10,14 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Created by roman on 17.07.2016.
  */
 
-@WebFilter(urlPatterns = {"/"})
+@WebFilter(urlPatterns = "/home")
 public class LoginFilter implements Filter {
     private static UserDAO userDAO;
 
@@ -36,11 +35,6 @@ public class LoginFilter implements Filter {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String requestURI = request.getRequestURI();
-        if (Objects.equals(requestURI, "/login") || Objects.equals(requestURI, "/registration")) {
-            chain.doFilter(request, response);
-            return;
-        }
 
         Optional<User> userOpt
                 = Optional.ofNullable(request.getSession())

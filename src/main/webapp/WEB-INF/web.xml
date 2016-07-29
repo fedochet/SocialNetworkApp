@@ -14,6 +14,27 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>HomeServlet</servlet-name>
+        <jsp-file>/home_page.jsp</jsp-file>
+    </servlet>
+
+    <servlet>
+        <servlet-name>LandingServlet</servlet-name>
+        <jsp-file>/landing_page.jsp</jsp-file>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>HomeServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>LandingServlet</servlet-name>
+        <url-pattern>/landing</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/rest/*</url-pattern>

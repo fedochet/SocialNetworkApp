@@ -8,14 +8,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
-  <head>
+<head>
     <title>Привет!</title>
-  </head>
-  <body>
-  <jsp:useBean id="sessionUser" scope="session" type="model.User" class="model.User"/>
-  Привет, ${sessionUser.username}!
-  <div>
+</head>
+<body>
+<jsp:useBean id="sessionUser" scope="session" type="model.User" class="model.User"/>
+Привет, ${sessionUser.username}!
+<div>
     <a href="<c:url value="/logout"/>">Logout</a>
-  </div>
-  </body>
+</div>
+</body>
 </html>
