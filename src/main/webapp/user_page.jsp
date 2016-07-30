@@ -7,7 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:useBean id="sessionUser" scope="session" type="model.User"/>
+<%--<jsp:useBean id="sessionUser" scope="session" type="model.User"/>--%>
 <jsp:useBean id="pageUser" scope="request" type="model.User"/>
 <html>
 <head>
@@ -22,7 +22,7 @@
 </head>
 <body>
 <header>
-    <div hidden id="pageUserId">${pageUser.id}</div>
+    <div hidden id="pageUser-Id">${pageUser.id}</div>
 
     <nav id="header-nav" class="navbar navbar-default navbar-static-top">
         <div class="container">
@@ -55,7 +55,7 @@
                 <div class="pull-left">
                     <img src="images/avatar.png" id="user-avatar-main" >
                 </div>
-                <h3>@${pageUser.username}</h3>
+                <h3 id="pageUser-username">@${pageUser.username}</h3>
                 <c:if test="${not empty pageUser.username or not empty pageUser.lastName }">
                     <h4>${pageUser.firstName} ${pageUser.lastName}</h4>
                 </c:if>
@@ -67,19 +67,7 @@
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
             <h1>Posts</h1>
-            <c:forEach items="${pageUserPosts}" var="post">
-                <div class="well wall-post row">
-                    <div class="col-xs-2">
-                        <img src="images/avatar.png" class="user-post-avatar">
-                    </div>
-                    <div class="col-xs-10">
-                        <strong>@${pageUser.username} </strong>${post.creationTime}
-                        <p>
-                            ${post.text}
-                        </p>
-                    </div>
-                </div>
-            </c:forEach>
+            <div id="posts"></div>
         </div>
     </div>
 </div>

@@ -46,7 +46,6 @@ public class UserPageServlet extends HttpServlet {
         }
 
         req.setAttribute("pageUser", userOpt.get());
-        req.setAttribute("pageUserPosts", postDAO.getByAuthorId(userOpt.get().getId()));
         req.getRequestDispatcher("/user_page.jsp").forward(req, resp);
     }
 }
