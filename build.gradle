@@ -33,5 +33,5 @@ dependencies {
 
 gretty {
     port = 8080
-    contextPath = '/'
+    contextPath = ''
 }

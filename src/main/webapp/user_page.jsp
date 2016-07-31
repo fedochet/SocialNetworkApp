@@ -5,7 +5,7 @@
   Time: 14:25
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--<jsp:useBean id="sessionUser" scope="session" type="model.User"/>--%>
 <jsp:useBean id="pageUser" scope="request" type="model.User"/>

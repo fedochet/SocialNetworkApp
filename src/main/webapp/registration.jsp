@@ -1,9 +1,9 @@
+<%@ page contentType="text/html; charset=UTF-8" language="java" %><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<fmt:setLocale value="${sessionScope.local}"/>
+<html>
 <head>
+    <meta charset="UTF-8">
     <title>Registration</title>
 </head>
 <body>
