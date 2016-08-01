@@ -51,7 +51,7 @@ public class PostResource {
             @QueryParam("offset") int offset,
             @QueryParam("limit") int limit
     ) {
-        List<Post> posts = postDAO.getByAuthorId(userId, offset, limit);
+        List<Post> posts = postDAO.getByAuthorId(userId, offset, limit, -1);
         try {
             String response = objectToJsonString(posts);
             return Response.ok(response).build();

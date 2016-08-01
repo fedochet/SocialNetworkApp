@@ -17,14 +17,18 @@ public interface PostDAO extends AbstractDAO<Post>{
      */
     List<Post> getByAuthorId(int id);
 
+
+
     /**
      * Returns limit or less number of posts by specified author
-     * starting from offset position (included) counting from 0
+     * starting from post with offsetID position (included) counting from 0
      * with same sort
      * @param id post author id
-     * @param offset position to start from
+     * @param offsetId highest id of returned posts must be less or equal to this; if -1 - not used
      * @param limit maximum amount of returned posts
+     * @param minId minimal id exclusive; if -1 - not used
      * @return immutable list of posts
      */
-    List<Post> getByAuthorId(int id, int offset, int limit);
+    List<Post> getByAuthorId(int id, int offsetId, int limit, int minId);
+
 }

@@ -7,10 +7,7 @@ import model.PostPrivacyType;
 
 import java.sql.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static utils.GeneralUtils.mapOrElse;
 
@@ -76,19 +73,41 @@ public class H2PostDAO implements PostDAO {
     }
 
     @Override
-    public List<Post> getByAuthorId(int id, int offset, int limit) {
+    public List<Post> getByAuthorId(int authorId, int offsetId, int limit, int minId) {
         String sql = "SELECT id, author_id, creation_time, text, post_privacy_type FROM posts "
-                + "WHERE author_id=? "
-                + "ORDER BY creation_time DESC, id DESC "
-                + "LIMIT ? OFFSET ? ";
+                + "WHERE author_id=? ";
+
+        Map<String, Integer> positions = new HashMap<>();
+        positions.put("authorId", 1);
+
+        if (offsetId!=-1) {
+            sql += "AND id <= ? ";
+            positions.put("offsetId", positions.size()+1);
+        }
+
+        if (minId!=-1) {
+            sql += "AND id > ? ";
+            positions.put("minId", positions.size()+1);
+        }
+
+        sql += "ORDER BY creation_time DESC, id DESC LIMIT ?";
+        positions.put("limit", positions.size()+1);
 
         try (
                 Connection c = connectionPool.getConnection();
                 PreparedStatement statement = c.prepareStatement(sql)
         ) {
-            statement.setInt(1, id);
-            statement.setInt(2, limit);
-            statement.setInt(3, offset);
+            statement.setInt(1, authorId);
+
+            if (offsetId!=-1) {
+                statement.setInt(positions.get("offsetId"), offsetId);
+            }
+
+            if (minId!=-1) {
+                statement.setInt(positions.get("minId"), minId);
+            }
+
+            statement.setInt(positions.get("limit"), limit);
 
             try(ResultSet resultSet = statement.executeQuery()) {
                 return parsePosts(resultSet);

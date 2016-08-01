@@ -173,7 +173,6 @@ public class H2PostDAOTest {
         postDAO.deleteById(postId);
     }
 
-    @Test
     public void youCanGetAllPostsOfUser() {
         User anotherUser = new User();
         anotherUser.setUsername("test_username");
@@ -220,8 +219,7 @@ public class H2PostDAOTest {
         userDAO.deleteById(anotherUser.getId());
     }
 
-    @Test
-    public void youCanGetPostsWithOffsetAndLimit() {
+    private Set<Integer> add100Posts() {
         Set<Integer> newPosts = new HashSet<>();
 
         for (int i = 0; i<100; i++) {
@@ -231,28 +229,86 @@ public class H2PostDAOTest {
             newPosts.add(postDAO.create(post));
         }
 
+        return newPosts;
+    }
+
+    private void deleteAllPostsById(Set<Integer> postIds) {
+        postIds.forEach(postDAO::deleteById);
+    }
+
+    @Test
+    public void youCanGetPostsWithOffsetId() {
+        Set<Integer> ids = add100Posts();
+
+
+        List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
+        assertThat(postDAO.getByAuthorId(testUser.getId(), -1, 100, -1), is(allPosts));
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(10).getId(), 100, -1),
+                is(allPosts.subList(10,100)));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(90).getId(), 100, -1),
+                is(allPosts.subList(90, 100)));
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(99).getId(), 100, -1), is(allPosts.subList(99,100)));
+
+        deleteAllPostsById(ids);
+    }
+
+    @Test
+    public void youCanGetPostsWithOffsetIdAndMaxId() {
+        Set<Integer> ids = add100Posts();
+
+        List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), -1, 100, -1), is(allPosts));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), -1, 100, allPosts.get(10).getId()),
+                is(allPosts.subList(0, 10)));
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(10).getId(), 100, allPosts.get(90).getId()),
+                is(allPosts.subList(10, 90)));
+
+        deleteAllPostsById(ids);
+    }
+
+    @Test
+    public void youCanGetPostsWithOffsetIdAndLimitAndMaxId() {
+        Set<Integer> ids = add100Posts();
+        List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(10).getId(), 100, allPosts.get(90).getId()),
+                is(allPosts.subList(10, 90)));
+
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(10).getId(), 40, allPosts.get(90).getId()),
+                is(allPosts.subList(10, 50)));
+        deleteAllPostsById(ids);
+    }
+
+    @Test
+    public void youCanGetPostsWithOffsetAndLimit() {
+
+        Set<Integer> ids = add100Posts();
+
         List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
         assertThat(allPosts.size(), is(100));
 
-        assertThat(postDAO.getByAuthorId(testUser.getId(), 0, 100),
+        assertThat(postDAO.getByAuthorId(testUser.getId(), -1, 100, -1),
                 is(allPosts));
 
-        List<Post> first50posts = postDAO.getByAuthorId(testUser.getId(), 0, 50);
+        List<Post> first50posts = postDAO.getByAuthorId(testUser.getId(), -1, 50, -1);
         assertThat(first50posts.size(), is(50));
-        assertThat(postDAO.getByAuthorId(testUser.getId(), 0, 50),
+        assertThat(postDAO.getByAuthorId(testUser.getId(), -1, 50, -1),
                 is(allPosts.subList(0, 50)));
 
-        assertThat(postDAO.getByAuthorId(testUser.getId(), 50, 20), is(allPosts.subList(50,70)));
-        assertThat(postDAO.getByAuthorId(testUser.getId(), 80, 100), is(allPosts.subList(80,100)));
-        assertThat(postDAO.getByAuthorId(testUser.getId(), 100, 1000).size(), is(0));
-        assertThat(postDAO.getByAuthorId(testUser.getId(), 200, 1000).size(), is(0));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(50).getId(), 20, -1), is(allPosts.subList(50,70)));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(80).getId(), 100, -1), is(allPosts.subList(80,100)));
+        assertThat(postDAO.getByAuthorId(testUser.getId(), 0, 1000, -1).size(), is(0));
 
-        assertThat("Posts are in wrong order!", postDAO.getByAuthorId(testUser.getId(),0, 100)
+        assertThat("Posts are in wrong order!", postDAO.getByAuthorId(testUser.getId(),-1, 100, -1)
                 .stream()
                 .sorted(Comparator.comparing(Post::getCreationTime).thenComparing(Post::getId).reversed())
                 .collect(Collectors.toList()),
             is(allPosts));
 
-        newPosts.forEach(postDAO::deleteById);
+        deleteAllPostsById(ids);
     }
 }
