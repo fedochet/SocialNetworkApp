@@ -16,9 +16,7 @@ window.addEventListener("DOMContentLoaded" , function (event) {
         url:"/rest/getposts",
         method: "GET",
         data : {
-            userId: pageUser.userId,
-            offset: 0,
-            limit: 20
+            userId: pageUser.userId
         }
     }).done(function (messages) {
         console.log(messages);

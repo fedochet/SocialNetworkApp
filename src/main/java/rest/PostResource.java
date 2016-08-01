@@ -9,10 +9,7 @@ import model.Post;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,10 +45,11 @@ public class PostResource {
     @GET
     public Response getPosts(
             @QueryParam("userId") int userId,
-            @QueryParam("offset") int offset,
-            @QueryParam("limit") int limit
+            @DefaultValue("-1") @QueryParam("offsetId") int offset,
+            @DefaultValue("20") @QueryParam("limit") int limit,
+            @DefaultValue("-1") @QueryParam("minId") int minId
     ) {
-        List<Post> posts = postDAO.getByAuthorId(userId, offset, limit, -1);
+        List<Post> posts = postDAO.getByAuthorId(userId, offset, limit, minId);
         try {
             String response = objectToJsonString(posts);
             return Response.ok(response).build();
