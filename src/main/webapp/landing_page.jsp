@@ -16,7 +16,7 @@
 </head>
 <body>
 <header>
-  <nav id="header-nav" class="navbar navbar-default navbar-static-top">
+  <nav id="header-nav" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
         <a class="navbar-brand" href="<c:url value="/"/>">Awesome Net</a>

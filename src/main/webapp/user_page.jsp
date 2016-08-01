@@ -28,7 +28,7 @@
 <header>
     <div hidden id="pageUser-Id">${pageUser.id}</div>
 
-    <nav id="header-nav" class="navbar navbar-default navbar-static-top">
+    <nav id="header-nav" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="<c:url value="/landing_page.jsp"/>">My awesome social network</a>
