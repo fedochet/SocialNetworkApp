@@ -18,7 +18,11 @@
     <link rel="stylesheet" href="<c:url value="/css/bootstrap.min.css"/>">
     <link rel="stylesheet" href="<c:url value="/css/styles.css"/>">
 
-    <title>John Doe</title>
+    <title>
+        <c:if test="${not empty pageUser.firstName or not empty pageUser.lastName}">
+            ${pageUser.firstName} ${pageUser.lastName} (</c:if>@${pageUser.username}<c:if test="${not empty pageUser.firstName or not empty pageUser.lastName}">)
+        </c:if>
+    </title>
 </head>
 <body>
 <header>
@@ -53,7 +57,7 @@
         <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12" id="user-info">
             <div class="well">
                 <div class="pull-left">
-                    <img src="images/avatar.png" id="user-avatar-main" >
+                    <img src="<c:url value="/images/avatar.png"/>" id="user-avatar-main" >
                 </div>
                 <h3 id="pageUser-username">@${pageUser.username}</h3>
                 <c:if test="${not empty pageUser.username or not empty pageUser.lastName }">

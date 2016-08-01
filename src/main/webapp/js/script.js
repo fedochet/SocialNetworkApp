@@ -29,7 +29,7 @@ window.addEventListener("DOMContentLoaded" , function (event) {
             var postDate = epochToDate(post.creationTime.epochSecond);
 
             postHtml += '<div class="well wall-post row">';
-            postHtml += '<div class="col-xs-2"><img src="images/avatar.png" class="user-post-avatar"></div>';
+            postHtml += '<div class="col-xs-2"><img src="/images/avatar.png" class="user-post-avatar"></div>';
             postHtml += '<div class="col-xs-10">';
             postHtml += '<strong>'+pageUser.username+'</strong> '+ postDate;
             postHtml += '<p>'+post.text+'</p>';
