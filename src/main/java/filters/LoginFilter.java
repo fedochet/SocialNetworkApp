@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -39,17 +40,21 @@ public class LoginFilter implements Filter {
         Optional<User> userOpt
                 = Optional.ofNullable(request.getSession())
                 .flatMap(this::getUser)
-                .map(User::getId)
-                .flatMap(userDAO::getById);
+                .flatMap(this::checkAndUpdateUser);
 
         if (userOpt.isPresent()) {
             request.getSession().setAttribute("sessionUser", userOpt.get());
             chain.doFilter(request, response);
-            return;
+                return;
         }
 
         request.getSession().removeAttribute("sessionUser");
         request.getRequestDispatcher("/login").forward(request, response);
+    }
+
+    private Optional<User> checkAndUpdateUser(User user) {
+        return userDAO.getById(user.getId())
+                .filter(dbUser -> Objects.equals(dbUser.getPassword(), user.getPassword()));
     }
 
 
