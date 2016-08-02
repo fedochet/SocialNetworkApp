@@ -2,6 +2,7 @@ package controllers;
 
 import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
+import lombok.extern.slf4j.Slf4j;
 import model.User;
 
 import javax.servlet.RequestDispatcher;
@@ -18,6 +19,7 @@ import java.util.Optional;
  * Created by roman on 29.07.2016.
  */
 
+@Slf4j
 @WebServlet(urlPatterns = "")
 public class IndexServlet extends HttpServlet {
 
@@ -35,6 +37,8 @@ public class IndexServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log.info("Serving root path.");
+
         Optional<User> userOpt
                 = Optional.ofNullable(req.getSession())
                 .flatMap(IndexServlet::getUser)
@@ -42,8 +46,10 @@ public class IndexServlet extends HttpServlet {
                 .flatMap(userDAO::getById);
 
         if (userOpt.isPresent()) {
+            log.info("Logged as %s; redirecting to home_page", userOpt.get().getUsername());
             homeDispatcher.forward(req, resp);
         } else {
+            log.info("User session is not attached; redirecting to landing_page.");
             landingDispatcher.forward(req, resp);
         }
 

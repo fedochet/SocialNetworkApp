@@ -28,6 +28,10 @@ dependencies {
 
     // Jackson
     compile 'com.fasterxml.jackson.core:jackson-databind:+'
+
+    // logging
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
 }
 
 

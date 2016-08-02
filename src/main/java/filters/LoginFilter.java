@@ -16,7 +16,7 @@ import java.util.Optional;
  * Created by roman on 17.07.2016.
  */
 
-@WebFilter(urlPatterns = "/home")
+@WebFilter(urlPatterns = {"/home", "/addpost"})
 public class LoginFilter implements Filter {
     private static UserDAO userDAO;
 
