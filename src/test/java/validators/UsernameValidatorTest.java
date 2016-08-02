@@ -49,4 +49,9 @@ public class UsernameValidatorTest {
         assertFalse(UsernameValidator.validate("my@mail.com"));
     }
 
+    @Test
+    public void nullabilityCheck() {
+        assertFalse(UsernameValidator.validate(null));
+    }
+
 }

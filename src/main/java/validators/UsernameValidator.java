@@ -1,5 +1,7 @@
 package validators;
 
+import com.sun.istack.internal.Nullable;
+
 import java.util.regex.Pattern;
 
 /**
@@ -14,7 +16,13 @@ public final class UsernameValidator {
     private static final Pattern pattern = Pattern.compile(usernamePattern);
 
 
-    public static boolean validate(String username) {
-        return pattern.matcher(username).matches();
+    /**
+     * Checks if passed username is valid username.
+     * @param username if null - returns false
+     * @return checks status
+     */
+    public static boolean validate(@Nullable String username) {
+        return username != null && pattern.matcher(username).matches();
+
     }
 }
