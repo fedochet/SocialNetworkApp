@@ -37,7 +37,7 @@ public class IndexServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("Serving root path.");
+        log.info("Serving GET request on {} path.", "/");
 
         Optional<User> userOpt
                 = Optional.ofNullable(req.getSession())
@@ -46,7 +46,7 @@ public class IndexServlet extends HttpServlet {
                 .flatMap(userDAO::getById);
 
         if (userOpt.isPresent()) {
-            log.info("Logged as %s; redirecting to home_page", userOpt.get().getUsername());
+            log.info("Logged in as '{}'; redirecting to home_page", userOpt.get().getUsername());
             homeDispatcher.forward(req, resp);
         } else {
             log.info("User session is not attached; redirecting to landing_page.");
