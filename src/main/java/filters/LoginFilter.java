@@ -2,6 +2,7 @@ package filters;
 
 import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
+import lombok.extern.slf4j.Slf4j;
 import model.User;
 
 import javax.servlet.*;
@@ -17,6 +18,7 @@ import java.util.Optional;
  * Created by roman on 17.07.2016.
  */
 
+@Slf4j
 @WebFilter(urlPatterns = {"/home", "/addpost"})
 public class LoginFilter implements Filter {
     private static UserDAO userDAO;
@@ -36,6 +38,7 @@ public class LoginFilter implements Filter {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        log.info("Filtering {} path", request.getServletPath());
 
         Optional<User> userOpt
                 = Optional.ofNullable(request.getSession())
@@ -43,13 +46,15 @@ public class LoginFilter implements Filter {
                 .flatMap(this::checkAndUpdateUser);
 
         if (userOpt.isPresent()) {
+            log.info("Logged as '{}'", userOpt.get().getUsername());
             request.getSession().setAttribute("sessionUser", userOpt.get());
             chain.doFilter(request, response);
-                return;
+            return;
         }
 
+        log.info("No validated user is attached to session; redirecting to landing page");
         request.getSession().removeAttribute("sessionUser");
-        request.getRequestDispatcher("/login").forward(request, response);
+        request.getRequestDispatcher("/").forward(request, response);
     }
 
     private Optional<User> checkAndUpdateUser(User user) {
