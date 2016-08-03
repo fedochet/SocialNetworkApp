@@ -3,6 +3,7 @@ package controllers;
 import dao.interfaces.PostDAO;
 import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
+import lombok.extern.slf4j.Slf4j;
 import model.User;
 import validators.UsernameValidator;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 /**
  * Created by roman on 21.07.2016.
  */
+@Slf4j
 @WebServlet(urlPatterns = "/user/*")
 public class UserPageServlet extends HttpServlet {
     private UserDAO userDAO;
@@ -34,6 +36,8 @@ public class UserPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log.info("Serving GET on {} path", req.getServletPath() + req.getPathInfo());
+
         Optional<User> userOpt
                 = Optional.ofNullable(req.getPathInfo())
                     .map(UserPageServlet::removeLeadingSlash)
@@ -41,10 +45,13 @@ public class UserPageServlet extends HttpServlet {
                     .flatMap(userDAO::getByUsername);
 
         if (!userOpt.isPresent()) {
+            log.warn("User '{}' does not exist! Redirecting to error page.", req.getPathInfo());
+
             resp.sendError(406, "This user doesn't exist!");
             return;
         }
 
+        log.info("User '{}' exists; forwarding to user_page.jsp", userOpt.get().getUsername());
         req.setAttribute("pageUser", userOpt.get());
         req.getRequestDispatcher("/user_page.jsp").forward(req, resp);
     }

@@ -36,6 +36,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>LandingServlet</servlet-name>
+        <url-pattern>/user</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
