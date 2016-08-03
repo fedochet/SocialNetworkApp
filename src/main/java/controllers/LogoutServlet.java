@@ -24,9 +24,9 @@ public class LogoutServlet extends HttpServlet {
 
         User sessionUser = (User) req.getSession().getAttribute("sessionUser");
         if (sessionUser!=null) {
-            log.info("User with '{}' username logged out; redirecting to landing page", sessionUser.getUsername());
+            log.info("User with '{}' username logged out; redirecting to /", sessionUser.getUsername());
         } else {
-            log.info("No user were attached to session; redirection to landing page");
+            log.info("No user were attached to session; redirection to /");
         }
 
         req.getSession().removeAttribute("sessionUser");
