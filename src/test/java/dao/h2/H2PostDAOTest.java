@@ -311,4 +311,23 @@ public class H2PostDAOTest {
 
         deleteAllPostsById(ids);
     }
+
+
+    @Test
+    public void ifAuthorIsDeletedAllPostsAreDeleted() {
+        User user = new User();
+        user.setUsername("constraintsTest");
+        user.setPassword("1234");
+
+        int userId = userDAO.create(user);
+
+        Post post = new Post();
+        post.setAuthorId(userId);
+
+        int postId = postDAO.create(post);
+
+        userDAO.deleteById(userId);
+
+        assertFalse(postDAO.getById(postId).isPresent());
+    }
 }
