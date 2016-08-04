@@ -22,4 +22,5 @@ public class User {
     private LocalDate birthDate;
     private Instant registrationTime;
 
+    private UserRole role;
 }

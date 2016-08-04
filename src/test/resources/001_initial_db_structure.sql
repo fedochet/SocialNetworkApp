@@ -36,6 +36,7 @@ CREATE TABLE users(
   last_name VARCHAR(255),
   info VARCHAR(255),
   birth_date DATE,
+  role INT NOT NULL REFERENCES user_roles(id)
 );
 
 CREATE TABLE posts(

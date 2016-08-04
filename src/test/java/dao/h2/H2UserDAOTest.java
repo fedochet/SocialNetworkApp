@@ -3,6 +3,7 @@ package dao.h2;
 import common.cp.ConnectionPool;
 import common.cp.SimpleConnectionPool;
 import model.User;
+import model.UserRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -48,6 +49,7 @@ public class H2UserDAOTest {
         testUser.setInfo("My status");
         testUser.setBirthDate(LocalDate.now());
         testUser.setRegistrationTime(Instant.now());
+        testUser.setRole(UserRole.ADMIN);
 
         return testUser;
     }
@@ -118,6 +120,21 @@ public class H2UserDAOTest {
         Optional<User> userOpt = userDAO.getById(testId);
         assertTrue(userOpt.isPresent());
         assertThat(userOpt.get(),is(testUser));
+
+        userDAO.deleteById(testId);
+    }
+
+    @Test
+    public void ifRoleIsNullItsSetToUser() {
+        User testUser = getTestUser();
+        testUser.setRole(null);
+
+        int testId = userDAO.create(testUser);
+        testUser.setId(testId);
+
+        Optional<User> userOpt = userDAO.getById(testId);
+        assertTrue(userOpt.isPresent());
+        assertThat(userOpt.get().getRole(), is(UserRole.USER));
 
         userDAO.deleteById(testId);
     }

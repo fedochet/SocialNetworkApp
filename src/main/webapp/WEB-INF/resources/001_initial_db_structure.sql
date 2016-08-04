@@ -7,18 +7,6 @@ DROP TABLE IF EXISTS post_comments;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS user_followers;
 
-CREATE TABLE users(
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  username VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  registration_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  first_name VARCHAR(255),
-  last_name VARCHAR(255),
-  info VARCHAR(255),
-  birth_date DATE
-);
-
-
 CREATE TABLE user_roles (
   id INT PRIMARY KEY,
   name VARCHAR(255)
@@ -38,6 +26,18 @@ INSERT INTO post_types(id,name) VALUES
 (1, 'public'),
 (2, 'private'),
 (3, 'protected');
+
+CREATE TABLE users(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  registration_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  info VARCHAR(255),
+  birth_date DATE,
+  role INT NOT NULL REFERENCES user_roles(id)
+);
 
 CREATE TABLE posts(
   id INT PRIMARY KEY AUTO_INCREMENT,
