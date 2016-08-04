@@ -6,6 +6,7 @@ import dao.h2.H2PostDAO;
 import dao.h2.H2UserDAO;
 import dao.interfaces.PostDAO;
 import dao.interfaces.UserDAO;
+import model.User;
 import services.SecurityService;
 import utils.SQLUtils;
 
@@ -47,6 +48,8 @@ public class ServicesProvider implements ServletContextListener {
 
         String scriptFilePath = servletContext.getRealPath(RESOURCES_FILE_PATH + DB_PREPARE_FILE_NAME);
         SQLUtils.executeScript(connectionPool, scriptFilePath);
+
+        addUsers(servletContext);
     }
 
     @Override
@@ -56,5 +59,18 @@ public class ServicesProvider implements ServletContextListener {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void addUsers(ServletContext context) {
+        UserDAO userDAO = (UserDAO) context.getAttribute(USER_DAO);
+        SecurityService securityService = (SecurityService) context.getAttribute(SECURITY_SERVICE);
+
+        User user = new User();
+        user.setUsername("test");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setPassword(securityService.encryptPassword("1234"));
+
+        userDAO.create(user);
     }
 }
