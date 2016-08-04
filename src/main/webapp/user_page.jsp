@@ -7,7 +7,6 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--<jsp:useBean id="sessionUser" scope="session" type="model.User"/>--%>
 <jsp:useBean id="pageUser" scope="request" type="model.User"/>
 <html>
 <head>
@@ -31,7 +30,7 @@
     <nav id="header-nav" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="<c:url value="/landing_page.jsp"/>">My awesome social network</a>
+                <a class="navbar-brand" href="<c:url value="/"/>">My awesome social network</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
