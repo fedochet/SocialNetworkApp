@@ -2,7 +2,6 @@ package dao.h2;
 
 import common.cp.ConnectionPool;
 import common.cp.SimpleConnectionPool;
-import dao.interfaces.UserDAO;
 import model.User;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -11,10 +10,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import utils.SQLUtils;
 
-import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.temporal.TemporalField;
 import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
@@ -48,6 +45,7 @@ public class H2UserDAOTest {
         testUser.setFirstName("roman");
         testUser.setLastName("golyshev");
         testUser.setPassword("test");
+        testUser.setInfo("My status");
         testUser.setBirthDate(LocalDate.now());
         testUser.setRegistrationTime(Instant.now());
 

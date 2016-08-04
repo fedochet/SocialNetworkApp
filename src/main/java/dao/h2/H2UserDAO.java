@@ -29,6 +29,7 @@ public class H2UserDAO implements UserDAO {
             user.setPassword(resultSet.getString("password"));
             user.setFirstName(resultSet.getString("first_name"));
             user.setLastName(resultSet.getString("last_name"));
+            user.setInfo(resultSet.getString("info"));
             user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
             user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
             return Optional.of(user);
@@ -37,18 +38,21 @@ public class H2UserDAO implements UserDAO {
         }
     }
 
-    private void setUpUser(PreparedStatement statement, User model) throws SQLException {
+    private int setUpUser(PreparedStatement statement, User model) throws SQLException {
         statement.setString(1, model.getUsername());
         statement.setString(2, model.getPassword());
         statement.setString(3, model.getFirstName());
         statement.setString(4, model.getLastName());
-        statement.setDate(5, mapOrNull(model.getBirthDate(), Date::valueOf));
-        statement.setTimestamp(6, mapOrElse(model.getRegistrationTime(), Timestamp::from, Timestamp.from(Instant.now())));
+        statement.setString(5, model.getInfo());
+        statement.setDate(6, mapOrNull(model.getBirthDate(), Date::valueOf));
+        statement.setTimestamp(7, mapOrElse(model.getRegistrationTime(), Timestamp::from, Timestamp.from(Instant.now())));
+
+        return 8;
     }
 
     @Override
     public Optional<User> getByUsername(String username) {
-        String sql = "SELECT id, username, password, first_name, last_name, birth_date, registration_time " +
+        String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time " +
                 "FROM users WHERE username=?";
         try (
             Connection c = connectionPool.getConnection();
@@ -66,8 +70,8 @@ public class H2UserDAO implements UserDAO {
     @Override
     public int create(User model) {
         String sql = "INSERT INTO " +
-                "users(username, password,first_name, last_name, birth_date, registration_time) " +
-                "VALUES (?,?,?,?,?,?)";
+                "users(username, password,first_name, last_name, info, birth_date,registration_time) " +
+                "VALUES (?,?,?,?,?,?,?)";
         try (
                 Connection c = connectionPool.getConnection();
                 PreparedStatement statement = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
@@ -87,7 +91,7 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public Optional<User> getById(int id) {
-        String sql = "SELECT id, username, password, first_name, last_name, birth_date, registration_time " +
+        String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time " +
                 "FROM users WHERE id=?";
         try (
                 Connection c = connectionPool.getConnection();
@@ -106,15 +110,15 @@ public class H2UserDAO implements UserDAO {
     @Override
     public boolean update(User model) {
         String sql = "UPDATE users SET "
-                + "username=?, password=?, first_name=?, last_name=?, birth_date=?, registration_time=? "
+                + "username=?, password=?, first_name=?, last_name=?, info=?, birth_date=?, registration_time=? "
                 + "WHERE id=?";
 
         try (
             Connection c = connectionPool.getConnection();
             PreparedStatement statement = c.prepareStatement(sql)
         ){
-            setUpUser(statement, model);
-            statement.setInt(7, model.getId());
+            int nextIndex = setUpUser(statement, model);
+            statement.setInt(nextIndex, model.getId());
             return statement.executeUpdate()>0;
 
         } catch (SQLException e) {
