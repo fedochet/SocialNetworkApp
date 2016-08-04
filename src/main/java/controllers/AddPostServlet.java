@@ -2,6 +2,7 @@ package controllers;
 
 import dao.interfaces.PostDAO;
 import listeners.ServicesProvider;
+import lombok.extern.slf4j.Slf4j;
 import model.Post;
 import model.PostPrivacyType;
 import model.User;
@@ -17,6 +18,7 @@ import java.io.IOException;
  * Created by roman on 24.07.2016.
  */
 
+@Slf4j
 @WebServlet(urlPatterns = "/addpost")
 public class AddPostServlet extends HttpServlet {
     private PostDAO postDAO;
@@ -24,11 +26,6 @@ public class AddPostServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         postDAO = (PostDAO) getServletContext().getAttribute(ServicesProvider.POST_DAO);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("add_post.jsp").forward(req, resp);
     }
 
     @Override
