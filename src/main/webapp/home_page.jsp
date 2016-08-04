@@ -65,9 +65,7 @@
                     <h4>${sessionUser.firstName} ${sessionUser.lastName}</h4>
                 </c:if>
                 <div class="clearfix"></div>
-                <p>
-                    There can be some information about me.
-                </p>
+                <p>${pageUser.info}</p>
             </div>
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">

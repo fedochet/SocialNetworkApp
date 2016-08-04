@@ -4,6 +4,7 @@ import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
+import model.UserRole;
 import services.SecurityService;
 import validators.UsernameValidator;
 
@@ -75,6 +76,8 @@ public class RegistrationServlet extends HttpServlet {
         user.setLastName(lastName);
         user.setPassword(securityService.encryptPassword(password));
         user.setBirthDate(birthDate);
+        user.setRole(UserRole.USER);
+        user.setInfo("This is my personal page!");
 
         log.info("Trying to safe this user: {}", user);
 
