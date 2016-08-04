@@ -30,6 +30,8 @@ public class AddPostServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log.info("Serving POST on {} path", req.getServletPath());
+
         User user = (User) req.getSession().getAttribute("sessionUser");
 
         String text = req.getParameter("text");
@@ -38,18 +40,22 @@ public class AddPostServlet extends HttpServlet {
         try {
             privacyType = PostPrivacyType.getTypeByID(Integer.parseInt(req.getParameter("post_privacy_type")));
         } catch (IllegalArgumentException e) {
+            log.warn("Illegal argument passed as post privacy type: '{}'; setting to default", req.getParameter("post_privacy_type"));
             privacyType = PostPrivacyType.DEFAULT;
         }
 
+        Post post = new Post();
         try {
-            Post post = new Post();
             post.setText(text);
             post.setAuthorId(user.getId());
             post.setPostPrivacyType(privacyType);
 
+            log.info("Trying to save post: '{}'", post);
             postDAO.create(post);
+            log.info("Post '{}' is successfully created; redirecting to /", post);
             resp.sendRedirect("/");
         } catch (RuntimeException e) {
+            log.warn("Failed to save post: '" + post.toString() + "'", e);
             resp.sendError(500, "Error while saving post");
         }
     }
