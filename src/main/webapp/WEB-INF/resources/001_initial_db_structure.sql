@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS user_roles;
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS post_comments;
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS user_followers;
 
 CREATE TABLE users(
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -58,4 +59,11 @@ CREATE TABLE post_comments(
   post_id INT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   author_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   creation_time TIMESTAMP
+);
+
+
+CREATE TABLE user_followers(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  follower_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );

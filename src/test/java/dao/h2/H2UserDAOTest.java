@@ -108,6 +108,21 @@ public class H2UserDAOTest {
     }
 
     @Test
+    public void infoCanBeNullOnCreate() {
+        User testUser = getTestUser();
+        testUser.setInfo(null);
+
+        int testId = userDAO.create(testUser);
+        testUser.setId(testId);
+
+        Optional<User> userOpt = userDAO.getById(testId);
+        assertTrue(userOpt.isPresent());
+        assertThat(userOpt.get(),is(testUser));
+
+        userDAO.deleteById(testId);
+    }
+
+    @Test
     public void birthDateCanBeNull() {
         User testUser = getTestUser();
         testUser.setBirthDate(null);
