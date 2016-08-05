@@ -28,12 +28,12 @@ public class IndexServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
-        homeDispatcher = getServletContext().getRequestDispatcher("/home");
-        landingDispatcher = getServletContext().getRequestDispatcher("/landing");
+        homePageJSPDispatcher = getServletContext().getRequestDispatcher("/WEB-INF/home_page.jsp");
+        landingPageJSPDispatcher = getServletContext().getRequestDispatcher("/WEB-INF/landing_page.jsp");
     }
 
-    private RequestDispatcher homeDispatcher;
-    private RequestDispatcher landingDispatcher;
+    private RequestDispatcher homePageJSPDispatcher;
+    private RequestDispatcher landingPageJSPDispatcher;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -46,11 +46,11 @@ public class IndexServlet extends HttpServlet {
                 .flatMap(userDAO::getById);
 
         if (userOpt.isPresent()) {
-            log.info("Logged in as '{}'; redirecting to home_page", userOpt.get().getUsername());
-            homeDispatcher.forward(req, resp);
+            log.info("Logged in as '{}'; forwarding to home_page", userOpt.get().getUsername());
+            homePageJSPDispatcher.forward(req, resp);
         } else {
-            log.info("User session is not attached; redirecting to landing_page.");
-            landingDispatcher.forward(req, resp);
+            log.info("User session is not attached; forwarding to landing_page.");
+            landingPageJSPDispatcher.forward(req, resp);
         }
 
     }

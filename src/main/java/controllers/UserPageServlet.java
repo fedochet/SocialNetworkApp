@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import model.User;
 import validators.UsernameValidator;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,6 +25,9 @@ public class UserPageServlet extends HttpServlet {
     private UserDAO userDAO;
     private PostDAO postDAO;
 
+    RequestDispatcher userPageJSPDisspatcher;
+
+
     private static String removeLeadingSlash(String path) {
         return path.substring(1);
     }
@@ -32,6 +36,8 @@ public class UserPageServlet extends HttpServlet {
     public void init() throws ServletException {
         userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
         postDAO = (PostDAO) getServletContext().getAttribute(ServicesProvider.POST_DAO);
+
+         userPageJSPDisspatcher = getServletContext().getRequestDispatcher("/WEB-INF/user_page.jsp");
     }
 
     @Override
@@ -53,6 +59,6 @@ public class UserPageServlet extends HttpServlet {
 
         log.info("User '{}' exists; forwarding to user_page.jsp", userOpt.get().getUsername());
         req.setAttribute("pageUser", userOpt.get());
-        req.getRequestDispatcher("/WEB-INF/user_page.jsp").forward(req, resp);
+        userPageJSPDisspatcher.forward(req, resp);
     }
 }

@@ -14,31 +14,6 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>HomeJSP</servlet-name>
-        <jsp-file>/WEB-INF/home_page.jsp</jsp-file>
-    </servlet>
-
-    <servlet>
-        <servlet-name>LandingJSP</servlet-name>
-        <jsp-file>/WEB-INF/landing_page.jsp</jsp-file>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>HomeJSP</servlet-name>
-        <url-pattern>/home</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>LandingJSP</servlet-name>
-        <url-pattern>/landing</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>LandingJSP</servlet-name>
-        <url-pattern>/user</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/rest/*</url-pattern>
