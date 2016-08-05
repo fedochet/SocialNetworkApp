@@ -14,6 +14,16 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>SettingsJSP</servlet-name>
+        <jsp-file>/WEB-INF/settings_page.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SettingsJSP</servlet-name>
+        <url-pattern>/settings</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/rest/*</url-pattern>
