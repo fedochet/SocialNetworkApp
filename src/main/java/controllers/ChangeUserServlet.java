@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 import static utils.GeneralUtils.mapOrNull;
 
@@ -40,16 +41,22 @@ public class ChangeUserServlet extends HttpServlet {
 
         String newUsername = req.getParameter("j_username");
 
-        if (!UsernameValidator.validate(newUsername)) {
-            log.info("'{}', passed as username, is invalid! Redirecting to error page.", newUsername);
-            resp.sendError(406, "This username is not valid");
-            return;
-        }
+        if (!Objects.equals(newUsername, sessionUser.getUsername())) {
+            log.info("User is trying to change username from '{}' to '{}'; trying to resolve", sessionUser.getUsername(), newUsername);
 
-        if (userDAO.getByUsername(newUsername).isPresent()) {
-            log.warn("'{}', passed as username, is already used! Redirecting to error page.", newUsername);
-            resp.sendError(406, "This username is already used");
-            return;
+            if (!UsernameValidator.validate(newUsername)) {
+                log.info("'{}', passed as username, is invalid! Redirecting to error page.", newUsername);
+                resp.sendError(406, "This username is not valid");
+                return;
+            }
+
+            if (userDAO.getByUsername(newUsername).isPresent()) {
+                log.warn("'{}', passed as username, is already used! Redirecting to error page.", newUsername);
+                resp.sendError(406, "This username is already used");
+                return;
+            }
+        } else {
+            log.info("User '{}' is not trying to change username", sessionUser.getUsername());
         }
 
         String newFirstName = req.getParameter("first_name");
@@ -75,8 +82,8 @@ public class ChangeUserServlet extends HttpServlet {
             log.info("Trying to update user: '{}'", sessionUser);
 
             if (userDAO.update(sessionUser)) {
-                log.info("User is successfully updated! Forwarding to /");
-                req.getRequestDispatcher("/").forward(req, resp);
+                log.info("User is successfully updated! Redirecting to /");
+                resp.sendRedirect("/");
             } else {
                 log.warn("Update went unsuccessful! Updating didn't return 'true'. Redirecting to error page");
                 resp.sendError(500, "Error while updating user; try again");

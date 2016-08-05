@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %><!DOCTYPE html>
+<jsp:useBean id="sessionUser" scope="session" type="model.User"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -38,28 +39,28 @@
         </div>
         <div class="col-xs-12 col-md-6">
             <h2>Change user information</h2>
-            <form class="form">
+            <form class="form" method="post" action="<c:url value="/changeuser"/>">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input class="form-control" type="text" name="j_username" id="username" placeholder="Username" required>
+                    <input class="form-control" type="text" name="j_username" id="username" placeholder="Username" value="${sessionUser.username}" required>
                 </div>
                 <div class="row">
                     <div class="col-sm-6 col-xs-12 form-group">
                         <label for="first_name">First Name</label>
-                        <input class="form-control" type="text" name="first_name" id="first_name" placeholder="First name">
+                        <input class="form-control" type="text" name="first_name" id="first_name" placeholder="First name" value="${sessionUser.firstName}">
                     </div>
                     <div class="col-sm-6 col-xs-12 form-group">
                         <label for="last_name">Last Name</label>
-                        <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Second name">
+                        <input class="form-control" type="text" name="last_name" id="last_name" placeholder="Second name" value="${sessionUser.lastName}">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="info">Info</label>
-                    <textarea id="info" class="form-control" rows="3" placeholder="Add some info about yourself" maxlength="255"></textarea>
+                    <textarea id="info" name="info" class="form-control" rows="3" placeholder="Add some info about yourself" maxlength="255">${sessionUser.info}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="birth_date">Birth date</label>
-                    <input class="form-control" type="date" name="birth_date" id="birth_date">
+                    <input class="form-control" type="date" name="birth_date" id="birth_date" value="${sessionUser.birthDate.toString()}">
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">Submit</button>
