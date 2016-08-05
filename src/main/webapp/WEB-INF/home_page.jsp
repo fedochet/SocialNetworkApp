@@ -43,7 +43,7 @@
                         <a href="<c:url value="/user/${sessionUser.username}"/>" class="glyphicon glyphicon-user"></a>
                     </li>
                     <li>
-                        <a href="#" class="glyphicon glyphicon-cog" id="nav-settings"></a>
+                        <a href="<c:url value="/settings"/>" class="glyphicon glyphicon-cog" id="nav-settings"></a>
                     </li>
                     <li>
                         <a href="<c:url value="/logout"/>" class="glyphicon glyphicon-log-out" id="nav-logout"></a>
