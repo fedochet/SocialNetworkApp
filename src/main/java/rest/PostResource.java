@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.interfaces.PostDAO;
 import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
+import lombok.extern.slf4j.Slf4j;
 import model.Post;
 
 import javax.servlet.ServletContext;
@@ -19,6 +20,7 @@ import java.util.List;
  * Created by roman on 25.07.2016.
  */
 
+@Slf4j
 @Path("/getposts")
 @Produces(MediaType.APPLICATION_JSON)
 public class PostResource {
@@ -49,11 +51,14 @@ public class PostResource {
             @DefaultValue("20") @QueryParam("limit") int limit,
             @DefaultValue("-1") @QueryParam("minId") int minId
     ) {
+        log.info("Serving GET rest on {};", request.getServletPath() + request.getPathInfo());
+
         List<Post> posts = postDAO.getByAuthorId(userId, offset, limit, minId);
         try {
             String response = objectToJsonString(posts);
             return Response.ok(response).build();
         } catch (JsonProcessingException e) {
+            log.warn("Error while processing json!", e);
             return Response.noContent().build();
         }
 
