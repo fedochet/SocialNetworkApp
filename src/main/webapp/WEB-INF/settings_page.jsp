@@ -19,7 +19,7 @@
         <div class="col-xs-12 col-md-6">
             <div>
                 <h2>Change password</h2>
-                <form class="form" method="post" action="<c:url value="/changepassword"/>">
+                <form class="form" method="post" action="<c:url value="/secure/changepassword"/>">
                     <div class="form-group">
                         <label for="old_password">Old password</label>
                         <input class="form-control" id="old_password" type="password" name="old_password">
@@ -39,7 +39,7 @@
         </div>
         <div class="col-xs-12 col-md-6">
             <h2>Change user information</h2>
-            <form class="form" method="post" action="<c:url value="/changeuser"/>">
+            <form class="form" method="post" action="<c:url value="/secure/changeuser"/>">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input class="form-control" type="text" name="j_username" id="username" placeholder="Username" value="${sessionUser.username}" required>

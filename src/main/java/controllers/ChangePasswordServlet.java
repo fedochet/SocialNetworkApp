@@ -14,7 +14,7 @@ import java.util.Objects;
  * Created by roman on 05.08.2016.
  */
 @Slf4j
-@WebServlet(urlPatterns = "/changepassword")
+@WebServlet(urlPatterns = "/secure/changepassword")
 public class ChangePasswordServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

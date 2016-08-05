@@ -20,7 +20,7 @@ import static utils.GeneralUtils.mapOrNull;
  */
 
 @Slf4j
-@WebServlet(urlPatterns = "/changeuser")
+@WebServlet(urlPatterns = "/secure/changeuser")
 public class ChangeUserServlet extends BaseServlet{
 
     @Override
