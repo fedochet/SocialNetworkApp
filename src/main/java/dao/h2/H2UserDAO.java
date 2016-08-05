@@ -7,6 +7,7 @@ import model.UserRole;
 
 import java.sql.*;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -24,22 +25,32 @@ public class H2UserDAO implements UserDAO {
         this.connectionPool = connectionPool;
     }
 
-    private Optional<User> parseUser(ResultSet resultSet) throws SQLException {
-        if (resultSet.next()) {
-            User user = new User();
-            user.setId(resultSet.getInt("id"));
-            user.setUsername(resultSet.getString("username"));
-            user.setPassword(resultSet.getString("password"));
-            user.setFirstName(resultSet.getString("first_name"));
-            user.setLastName(resultSet.getString("last_name"));
-            user.setInfo(resultSet.getString("info"));
-            user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
-            user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
-            user.setRole(UserRole.getRoleById(resultSet.getInt("role")));
-            return Optional.of(user);
-        } else {
-            return Optional.empty();
+    private User parseUser(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getInt("id"));
+        user.setUsername(resultSet.getString("username"));
+        user.setPassword(resultSet.getString("password"));
+        user.setFirstName(resultSet.getString("first_name"));
+        user.setLastName(resultSet.getString("last_name"));
+        user.setInfo(resultSet.getString("info"));
+        user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
+        user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
+        user.setRole(UserRole.getRoleById(resultSet.getInt("role")));
+        return user;
+    }
+
+    private Optional<User> parseUserOpt(ResultSet resultSet) throws SQLException {
+        if (resultSet.next()) return Optional.of(parseUser(resultSet));
+        else return Optional.empty();
+    }
+
+    private List<User> parseUsers(ResultSet resultSet) throws SQLException {
+        List<User> result = new ArrayList<>();
+        while (resultSet.next()) {
+            result.add(parseUser(resultSet));
         }
+
+        return Collections.unmodifiableList(result);
     }
 
     private int setUpUser(PreparedStatement statement, User model) throws SQLException {
@@ -65,7 +76,7 @@ public class H2UserDAO implements UserDAO {
         ) {
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
-                return parseUser(resultSet);
+                return parseUserOpt(resultSet);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -93,6 +104,7 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public boolean addFollower(int userId, int followerId) {
+        if (userId == followerId) return false;
         if (isFollowing(userId, followerId)) return false;
 
         String sql = "INSERT INTO user_followers(user_id, follower_id) " +
@@ -134,12 +146,41 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public List<User> getAllFollowers(int userId) {
-        return Collections.emptyList();
+        String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time, role " +
+                "FROM users WHERE id IN (SELECT follower_id FROM user_followers WHERE user_id=?) " +
+                "ORDER BY id ASC";
+
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return parseUsers(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<User> getAllSubscriptions(int userId) {
-        return Collections.emptyList();
+        String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time, role " +
+                "FROM users WHERE id IN (SELECT user_id FROM user_followers WHERE follower_id=?) " +
+                "ORDER BY id ASC";
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return parseUsers(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -174,7 +215,7 @@ public class H2UserDAO implements UserDAO {
         ) {
             statement.setInt(1, id);
             try(ResultSet resultSet = statement.executeQuery()) {
-                return parseUser(resultSet);
+                return parseUserOpt(resultSet);
             }
 
         } catch (SQLException e) {

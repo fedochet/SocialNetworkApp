@@ -269,4 +269,52 @@ public class H2UserDAOTest {
         userDAO.deleteById(testUser.getId());
         userDAO.deleteById(follower.getId());
     }
+
+    @Test
+    public void youCanGetAllFollowersAndSubscriptions() {
+        User testUser = getTestUser();
+        testUser.setId(userDAO.create(testUser));
+
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setPassword("user1");
+        user1.setId(userDAO.create(user1));
+
+        User user2 = new User();
+        user2.setUsername("user2");
+        user2.setPassword("user2");
+        user2.setId(userDAO.create(user2));
+
+        assertTrue(userDAO.getAllFollowers(testUser.getId()).isEmpty());
+        assertTrue(userDAO.getAllSubscriptions(testUser.getId()).isEmpty());
+
+        userDAO.addFollower(testUser.getId(), user1.getId());
+        assertThat(userDAO.getAllFollowers(testUser.getId()).size(), is(1));
+        assertThat(userDAO.getAllFollowers(testUser.getId()).get(0),
+                is(userDAO.getById(user1.getId()).get()));
+        assertTrue(userDAO.getAllSubscriptions(testUser.getId()).isEmpty());
+
+        userDAO.addFollower(testUser.getId(), user2.getId());
+        assertThat(userDAO.getAllFollowers(testUser.getId()).size(), is(2));
+        assertThat(userDAO.getAllFollowers(testUser.getId()).get(0),
+                is(userDAO.getById(user1.getId()).get()));
+        assertThat(userDAO.getAllFollowers(testUser.getId()).get(1),
+                is(userDAO.getById(user2.getId()).get()));
+        assertTrue(userDAO.getAllSubscriptions(testUser.getId()).isEmpty());
+
+        assertThat(userDAO.getAllSubscriptions(user1.getId()).get(0),
+                is(userDAO.getById(testUser.getId()).get()));
+        assertThat(userDAO.getAllSubscriptions(user2.getId()).get(0),
+                is(userDAO.getById(testUser.getId()).get()));
+
+        userDAO.addFollower(user1.getId(), user2.getId());
+        assertThat(userDAO.getAllSubscriptions(user2.getId()).get(0),
+                is(userDAO.getById(testUser.getId()).get()));
+        assertThat(userDAO.getAllSubscriptions(user2.getId()).get(1),
+                is(userDAO.getById(user1.getId()).get()));
+
+        userDAO.deleteById(user1.getId());
+        userDAO.deleteById(user2.getId());
+        userDAO.deleteById(testUser.getId());
+    }
 }
