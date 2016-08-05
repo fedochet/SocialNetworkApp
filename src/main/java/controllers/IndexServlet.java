@@ -1,14 +1,11 @@
 package controllers;
 
-import dao.interfaces.UserDAO;
-import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,13 +18,11 @@ import java.util.Optional;
 
 @Slf4j
 @WebServlet(urlPatterns = "")
-public class IndexServlet extends HttpServlet {
-
-    private UserDAO userDAO;
+public class IndexServlet extends BaseServlet{
 
     @Override
     public void init() throws ServletException {
-        userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
+        super.init();
         homePageJSPDispatcher = getServletContext().getRequestDispatcher("/WEB-INF/home_page.jsp");
         landingPageJSPDispatcher = getServletContext().getRequestDispatcher("/WEB-INF/landing_page.jsp");
     }

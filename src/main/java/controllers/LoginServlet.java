@@ -1,14 +1,10 @@
 package controllers;
 
-import dao.interfaces.UserDAO;
-import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
-import services.SecurityService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,15 +16,7 @@ import java.util.Optional;
  */
 @Slf4j
 @WebServlet(urlPatterns = "/login")
-public class LoginServlet extends HttpServlet {
-    private SecurityService securityService;
-    private UserDAO userDAO;
-
-    @Override
-    public void init() throws ServletException {
-        securityService = (SecurityService) getServletContext().getAttribute(ServicesProvider.SECURITY_SERVICE);
-        userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
-    }
+public class LoginServlet extends BaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

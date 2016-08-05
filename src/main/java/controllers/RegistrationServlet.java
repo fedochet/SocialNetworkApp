@@ -1,17 +1,12 @@
 package controllers;
 
-import dao.interfaces.UserDAO;
-import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import model.UserRole;
-import services.SecurityService;
 import validators.UsernameValidator;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,17 +23,7 @@ import static utils.GeneralUtils.mapOrNull;
 
 @Slf4j
 @WebServlet(urlPatterns = "/registration")
-public class RegistrationServlet extends HttpServlet {
-
-    private UserDAO userDAO;
-    private SecurityService securityService;
-
-    @Override
-    public void init() throws ServletException {
-        ServletContext context = getServletContext();
-        userDAO = (UserDAO) context.getAttribute(ServicesProvider.USER_DAO);
-        securityService = (SecurityService) context.getAttribute(ServicesProvider.SECURITY_SERVICE);
-    }
+public class RegistrationServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -1,8 +1,5 @@
 package controllers;
 
-import dao.interfaces.PostDAO;
-import dao.interfaces.UserDAO;
-import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
 import validators.UsernameValidator;
@@ -10,7 +7,6 @@ import validators.UsernameValidator;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,12 +17,9 @@ import java.util.Optional;
  */
 @Slf4j
 @WebServlet(urlPatterns = "/user/*")
-public class UserPageServlet extends HttpServlet {
-    private UserDAO userDAO;
-    private PostDAO postDAO;
+public class UserPageServlet extends BaseServlet {
 
     RequestDispatcher userPageJSPDisspatcher;
-
 
     private static String removeLeadingSlash(String path) {
         return path.substring(1);
@@ -34,10 +27,8 @@ public class UserPageServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
-        postDAO = (PostDAO) getServletContext().getAttribute(ServicesProvider.POST_DAO);
-
-         userPageJSPDisspatcher = getServletContext().getRequestDispatcher("/WEB-INF/user_page.jsp");
+        super.init();
+        userPageJSPDisspatcher = getServletContext().getRequestDispatcher("/WEB-INF/user_page.jsp");
     }
 
     @Override
