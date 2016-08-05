@@ -15,28 +15,27 @@
     </servlet>
 
     <servlet>
-        <servlet-name>HomeServlet</servlet-name>
-        <jsp-file>/home_page.jsp</jsp-file>
+        <servlet-name>HomeJSP</servlet-name>
+        <jsp-file>/WEB-INF/home_page.jsp</jsp-file>
     </servlet>
 
     <servlet>
-        <servlet-name>LandingServlet</servlet-name>
-        <jsp-file>/landing_page.jsp</jsp-file>
+        <servlet-name>LandingJSP</servlet-name>
+        <jsp-file>/WEB-INF/landing_page.jsp</jsp-file>
     </servlet>
 
-
     <servlet-mapping>
-        <servlet-name>HomeServlet</servlet-name>
+        <servlet-name>HomeJSP</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>LandingServlet</servlet-name>
+        <servlet-name>LandingJSP</servlet-name>
         <url-pattern>/landing</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>LandingServlet</servlet-name>
+        <servlet-name>LandingJSP</servlet-name>
         <url-pattern>/user</url-pattern>
     </servlet-mapping>
 

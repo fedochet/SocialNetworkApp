@@ -53,6 +53,6 @@ public class UserPageServlet extends HttpServlet {
 
         log.info("User '{}' exists; forwarding to user_page.jsp", userOpt.get().getUsername());
         req.setAttribute("pageUser", userOpt.get());
-        req.getRequestDispatcher("/user_page.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/user_page.jsp").forward(req, resp);
     }
 }
