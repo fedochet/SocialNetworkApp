@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 
 @Slf4j
-@WebFilter(urlPatterns = {"/home", "/addpost"})
+@WebFilter(urlPatterns = {"/home", "/addpost", "/settings"})
 public class LoginFilter implements Filter {
     private static UserDAO userDAO;
 
