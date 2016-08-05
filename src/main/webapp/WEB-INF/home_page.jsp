@@ -40,13 +40,13 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="#" class="glyphicon glyphicon-user"></a>
+                        <a href="<c:url value="/user/${sessionUser.username}"/>" class="glyphicon glyphicon-user"></a>
                     </li>
                     <li>
                         <a href="#" class="glyphicon glyphicon-cog" id="nav-settings"></a>
                     </li>
                     <li>
-                        <a href="#" class="glyphicon glyphicon-log-out" id="nav-logout"></a>
+                        <a href="<c:url value="/logout"/>" class="glyphicon glyphicon-log-out" id="nav-logout"></a>
                     </li>
                 </ul>
             </div>
