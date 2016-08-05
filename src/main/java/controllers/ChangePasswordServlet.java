@@ -39,6 +39,7 @@ public class ChangePasswordServlet extends BaseServlet {
         if (newPassword == null || newPassword.isEmpty() || !Objects.equals(newPassword, newPasswordTest)) {
             log.info("new password is null, wrong or not equals to test password; redirecting to error page");
             resp.sendError(406, "New password is incorrect");
+            return;
         }
 
         try {

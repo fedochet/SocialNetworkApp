@@ -19,7 +19,7 @@
         <div class="col-xs-12 col-md-6">
             <div>
                 <h2>Change password</h2>
-                <form class="form">
+                <form class="form" method="post" action="<c:url value="/changepassword"/>">
                     <div class="form-group">
                         <label for="old_password">Old password</label>
                         <input class="form-control" id="old_password" type="password" name="old_password">
