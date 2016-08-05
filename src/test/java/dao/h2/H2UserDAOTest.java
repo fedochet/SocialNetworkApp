@@ -54,6 +54,15 @@ public class H2UserDAOTest {
         return testUser;
     }
 
+    private User getFollower() {
+        User follower = new User();
+        follower.setUsername("follower");
+        follower.setPassword("1111");
+        follower.setRole(UserRole.USER);
+
+        return follower;
+    }
+
     @Test
     public void userCreationAndDeletion() {
         User testUser = getTestUser();
@@ -236,5 +245,28 @@ public class H2UserDAOTest {
         User testUser = getTestUser();
         testUser.setId(-1);
         assertFalse(userDAO.update(testUser));
+    }
+
+    @Test
+    public void afterAddFollowerUserBecomesFollower() {
+        User testUser = getTestUser();
+        testUser.setId(userDAO.create(testUser));
+
+        User follower = getFollower();
+        follower.setId(userDAO.create(follower));
+
+        assertFalse(userDAO.isFollowing(testUser.getId(), follower.getId()));
+        assertFalse(userDAO.removeFollower(testUser.getId(), follower.getId()));
+
+        assertTrue(userDAO.addFollower(testUser.getId(), follower.getId()));
+        assertTrue(userDAO.isFollowing(testUser.getId(), follower.getId()));
+        assertFalse(userDAO.addFollower(testUser.getId(), follower.getId()));
+
+        assertTrue(userDAO.removeFollower(testUser.getId(), follower.getId()));
+        assertFalse(userDAO.isFollowing(testUser.getId(), follower.getId()));
+        assertFalse(userDAO.removeFollower(testUser.getId(), follower.getId()));
+
+        userDAO.deleteById(testUser.getId());
+        userDAO.deleteById(follower.getId());
     }
 }

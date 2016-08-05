@@ -65,5 +65,6 @@ CREATE TABLE post_comments(
 CREATE TABLE user_followers(
   id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  follower_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
+  follower_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE (user_id, follower_id)
 );

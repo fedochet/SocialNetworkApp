@@ -7,6 +7,8 @@ import model.UserRole;
 
 import java.sql.*;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static utils.GeneralUtils.mapOrElse;
@@ -68,6 +70,76 @@ public class H2UserDAO implements UserDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean isFollowing(int userId, int followerId) {
+        String sql = "SELECT id FROM user_followers WHERE user_id=? AND follower_id=?";
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            statement.setInt(1, userId);
+            statement.setInt(2, followerId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public boolean addFollower(int userId, int followerId) {
+        if (isFollowing(userId, followerId)) return false;
+
+        String sql = "INSERT INTO user_followers(user_id, follower_id) " +
+                "VALUES (?, ?)";
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+        ) {
+            statement.setInt(1, userId);
+            statement.setInt(2, followerId);
+            statement.executeUpdate();
+
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                if (keys.next())
+                    return true;
+                throw new SQLException("Adding follower failed: no ID generated");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean removeFollower(int userId, int followerId) {
+        if (!isFollowing(userId, followerId)) return false;
+
+        String sql = "DELETE FROM user_followers WHERE user_id=? AND follower_id=?";
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ){
+            statement.setInt(1, userId);
+            statement.setInt(2, followerId);
+            return statement.executeUpdate()!=0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<User> getAllFollowers(int userId) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<User> getAllSubscriptions(int userId) {
+        return Collections.emptyList();
     }
 
     @Override
