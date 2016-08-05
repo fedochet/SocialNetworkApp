@@ -2,7 +2,6 @@ package dao.interfaces;
 
 import model.User;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -10,11 +9,4 @@ import java.util.Optional;
  */
 public interface UserDAO extends AbstractDAO<User>{
     Optional<User> getByUsername(String username);
-
-    boolean addFollower(int userId, int followerId);
-    boolean removeFollower(int userId, int followerId);
-    boolean isFollowing(int userId, int followerId);
-
-    List<User> getAllFollowers(int userId);
-    List<User> getAllSubscriptions(int userId);
 }
