@@ -25,11 +25,11 @@
                         <input class="form-control" id="old_password" type="password" name="old_password">
                     </div>
                     <div class="form-group">
-                        <label for="new_password_1">New password</label>
-                        <input class="form-control" id="new_password_1" type="password" name="new_password_1">
+                        <label for="new_password">New password</label>
+                        <input class="form-control" id="new_password" type="password" name="new_password">
 
-                        <label for="new_password_2">Repeat password</label>
-                        <input class="form-control" id="new_password_2" type="password" name="new_password_2">
+                        <label for="new_password_test">Repeat password</label>
+                        <input class="form-control" id="new_password_test" type="password" name="new_password_test">
                     </div>
                     <div class="form-group">
                         <button class="btn btn-primary" type="submit">Submit</button>
