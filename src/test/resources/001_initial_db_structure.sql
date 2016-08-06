@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS post_comments;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS user_followers;
+DROP VIEW IF EXISTS post_views;
 
 CREATE TABLE user_roles (
   id INT PRIMARY KEY,
@@ -13,8 +14,8 @@ CREATE TABLE user_roles (
 );
 
 INSERT INTO user_roles VALUES
-(0, 'user'),
-(1, 'admin');
+  (0, 'user'),
+  (1, 'admin');
 
 CREATE TABLE post_types(
   id INT PRIMARY KEY,
@@ -22,10 +23,10 @@ CREATE TABLE post_types(
 );
 
 INSERT INTO post_types(id,name) VALUES
-(0,'default'),
-(1, 'public'),
-(2, 'private'),
-(3, 'protected');
+  (0,'default'),
+  (1, 'public'),
+  (2, 'private'),
+  (3, 'protected');
 
 CREATE TABLE users(
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -68,3 +69,24 @@ CREATE TABLE user_followers(
   follower_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   UNIQUE (user_id, follower_id)
 );
+
+CREATE OR REPLACE VIEW post_views(
+    post_id,
+    post_text,
+    post_creation_time,
+    author_id,
+    author_username,
+    author_firstname,
+    author_lastname,
+    likes) AS
+  SELECT posts.id,
+    posts.text,
+    posts.creation_time,
+    posts.author_id,
+    users.username,
+    users.first_name,
+    users.last_name,
+    count(likes.id)
+  FROM posts
+    JOIN users ON posts.author_id=users.id
+    JOIN likes ON posts.id=likes.post_id;
