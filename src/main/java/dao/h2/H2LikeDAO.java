@@ -4,14 +4,11 @@ import common.cp.ConnectionPool;
 import dao.interfaces.LikeDAO;
 import model.Post;
 import model.User;
-import model.UserRole;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static utils.GeneralUtils.mapOrNull;
+import static utils.DAOUtils.parseUsers;
 
 /**
  * Created by roman on 06.08.2016.
@@ -21,29 +18,6 @@ public class H2LikeDAO implements LikeDAO {
 
     public H2LikeDAO(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
-    }
-
-    private User parseUser(ResultSet resultSet) throws SQLException {
-        User user = new User();
-        user.setId(resultSet.getInt("id"));
-        user.setUsername(resultSet.getString("username"));
-        user.setPassword(resultSet.getString("password"));
-        user.setFirstName(resultSet.getString("first_name"));
-        user.setLastName(resultSet.getString("last_name"));
-        user.setInfo(resultSet.getString("info"));
-        user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
-        user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
-        user.setRole(UserRole.getRoleById(resultSet.getInt("role")));
-        return user;
-    }
-
-    private List<User> parseUsers(ResultSet resultSet) throws SQLException {
-        List<User> result = new ArrayList<>();
-        while (resultSet.next()) {
-            result.add(parseUser(resultSet));
-        }
-
-        return Collections.unmodifiableList(result);
     }
 
     @Override

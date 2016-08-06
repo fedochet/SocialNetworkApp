@@ -9,6 +9,7 @@ import java.sql.*;
 import java.time.Instant;
 import java.util.Optional;
 
+import static utils.DAOUtils.parseUserOpt;
 import static utils.GeneralUtils.mapOrElse;
 import static utils.GeneralUtils.mapOrNull;
 
@@ -20,25 +21,6 @@ public class H2UserDAO implements UserDAO {
 
     public H2UserDAO(ConnectionPool connectionPool){
         this.connectionPool = connectionPool;
-    }
-
-    private User parseUser(ResultSet resultSet) throws SQLException {
-        User user = new User();
-        user.setId(resultSet.getInt("id"));
-        user.setUsername(resultSet.getString("username"));
-        user.setPassword(resultSet.getString("password"));
-        user.setFirstName(resultSet.getString("first_name"));
-        user.setLastName(resultSet.getString("last_name"));
-        user.setInfo(resultSet.getString("info"));
-        user.setBirthDate(mapOrNull(resultSet.getDate("birth_date"), Date::toLocalDate));
-        user.setRegistrationTime(resultSet.getTimestamp("registration_time").toInstant());
-        user.setRole(UserRole.getRoleById(resultSet.getInt("role")));
-        return user;
-    }
-
-    private Optional<User> parseUserOpt(ResultSet resultSet) throws SQLException {
-        if (resultSet.next()) return Optional.of(parseUser(resultSet));
-        else return Optional.empty();
     }
 
     private int setUpUser(PreparedStatement statement, User model) throws SQLException {
