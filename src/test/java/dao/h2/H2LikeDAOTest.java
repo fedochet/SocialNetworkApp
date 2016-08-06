@@ -51,15 +51,15 @@ public class H2LikeDAOTest {
         testPost.setAuthorId(testUser.getId());
         testPost.setId(postDAO.create(testPost));
 
-        assertFalse(likeDAO.hasLike(testPost, testUser));
-        assertTrue(likeDAO.addLike(testPost, testUser));
-        assertTrue(likeDAO.hasLike(testPost, testUser));
+        assertFalse(likeDAO.hasLike(testPost.getId(), testUser.getId()));
+        assertTrue(likeDAO.addLike(testPost.getId(), testUser.getId()));
+        assertTrue(likeDAO.hasLike(testPost.getId(), testUser.getId()));
 
-        assertFalse(likeDAO.addLike(testPost, testUser));
+        assertFalse(likeDAO.addLike(testPost.getId(), testUser.getId()));
 
-        assertTrue(likeDAO.removeLike(testPost, testUser));
-        assertFalse(likeDAO.hasLike(testPost, testUser));
-        assertFalse(likeDAO.removeLike(testPost, testUser));
+        assertTrue(likeDAO.removeLike(testPost.getId(), testUser.getId()));
+        assertFalse(likeDAO.hasLike(testPost.getId(), testUser.getId()));
+        assertFalse(likeDAO.removeLike(testPost.getId(), testUser.getId()));
 
         userDAO.deleteById(testUser.getId());
     }
@@ -76,18 +76,18 @@ public class H2LikeDAOTest {
         post.setAuthorId(user1.getId());
         post.setId(postDAO.create(post));
 
-        assertTrue(likeDAO.getAllLikedUsers(post).isEmpty());
+        assertTrue(likeDAO.getAllLikedUsers(post.getId()).isEmpty());
 
-        likeDAO.addLike(post, user1);
+        likeDAO.addLike(post.getId(), user1.getId());
 
-        assertThat(likeDAO.getAllLikedUsers(post).get(0),
+        assertThat(likeDAO.getAllLikedUsers(post.getId()).get(0),
                 is(userDAO.getById(user1.getId()).get()));
 
-        likeDAO.addLike(post, user2);
+        likeDAO.addLike(post.getId(), user2.getId());
 
-        assertThat(likeDAO.getAllLikedUsers(post).get(0),
+        assertThat(likeDAO.getAllLikedUsers(post.getId()).get(0),
                 is(userDAO.getById(user1.getId()).get()));
-        assertThat(likeDAO.getAllLikedUsers(post).get(1),
+        assertThat(likeDAO.getAllLikedUsers(post.getId()).get(1),
                 is(userDAO.getById(user2.getId()).get()));
 
 

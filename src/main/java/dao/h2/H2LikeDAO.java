@@ -2,7 +2,6 @@ package dao.h2;
 
 import common.cp.ConnectionPool;
 import dao.interfaces.LikeDAO;
-import model.Post;
 import model.User;
 
 import java.sql.*;
@@ -21,8 +20,8 @@ public class H2LikeDAO implements LikeDAO {
     }
 
     @Override
-    public boolean addLike(Post post, User user) {
-        if (hasLike(post, user)) return false;
+    public boolean addLike(int postId, int userId) {
+        if (hasLike(postId, userId)) return false;
 
         String sql = "INSERT INTO likes(post_id, user_id) " +
                 "VALUES (?, ?)";
@@ -31,8 +30,8 @@ public class H2LikeDAO implements LikeDAO {
             Connection connection = connectionPool.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
         ) {
-            statement.setInt(1, post.getId());
-            statement.setInt(2, user.getId());
+            statement.setInt(1, postId);
+            statement.setInt(2, userId);
             statement.execute();
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
@@ -46,16 +45,16 @@ public class H2LikeDAO implements LikeDAO {
     }
 
     @Override
-    public boolean removeLike(Post post, User user) {
-        if (!hasLike(post, user)) return false;
+    public boolean removeLike(int postId, int userId) {
+        if (!hasLike(postId, userId)) return false;
 
         String sql = "DELETE FROM likes WHERE post_id=? AND user_id=?";
         try(
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
-            statement.setInt(1, post.getId());
-            statement.setInt(2, user.getId());
+            statement.setInt(1, postId);
+            statement.setInt(2, userId);
 
             return statement.executeUpdate()!=0;
         } catch (SQLException e) {
@@ -64,15 +63,15 @@ public class H2LikeDAO implements LikeDAO {
     }
 
     @Override
-    public boolean hasLike(Post post, User user) {
+    public boolean hasLike(int postId, int userId) {
         String sql = "SELECT id FROM likes WHERE post_id=? AND user_id=?";
 
         try(
             Connection connection = connectionPool.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)
         ) {
-            statement.setInt(1, post.getId());
-            statement.setInt(2, user.getId());
+            statement.setInt(1, postId);
+            statement.setInt(2, userId);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next();
@@ -83,7 +82,7 @@ public class H2LikeDAO implements LikeDAO {
     }
 
     @Override
-    public List<User> getAllLikedUsers(Post post) {
+    public List<User> getAllLikedUsers(int postId) {
         String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time, role " +
                 "FROM users WHERE id IN (SELECT user_id FROM likes WHERE post_id=?) " +
                 "ORDER BY id ASC";
@@ -93,7 +92,7 @@ public class H2LikeDAO implements LikeDAO {
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
         ) {
-            statement.setInt(1, post.getId());
+            statement.setInt(1, postId);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 return parseUsers(resultSet);
