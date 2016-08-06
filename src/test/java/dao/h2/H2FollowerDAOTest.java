@@ -3,17 +3,15 @@ package dao.h2;
 import common.cp.ConnectionPool;
 import common.cp.SimpleConnectionPool;
 import model.User;
-import model.UserRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import utils.SQLUtils;
 
-import java.time.Instant;
-import java.time.LocalDate;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static utils.TestsUtils.getFollower;
+import static utils.TestsUtils.getTestUser;
 
 /**
  * Created by roman on 06.08.2016.
@@ -38,29 +36,6 @@ public class H2FollowerDAOTest {
     @AfterClass
     public static void afterClass() throws Exception {
         connectionPool.close();
-    }
-
-    private User getTestUser() {
-        User testUser = new User();
-        testUser.setUsername("TestUser");
-        testUser.setFirstName("roman");
-        testUser.setLastName("golyshev");
-        testUser.setPassword("test");
-        testUser.setInfo("My status");
-        testUser.setBirthDate(LocalDate.now());
-        testUser.setRegistrationTime(Instant.now());
-        testUser.setRole(UserRole.ADMIN);
-
-        return testUser;
-    }
-
-    private User getFollower() {
-        User follower = new User();
-        follower.setUsername("follower");
-        follower.setPassword("1111");
-        follower.setRole(UserRole.USER);
-
-        return follower;
     }
 
     @Test

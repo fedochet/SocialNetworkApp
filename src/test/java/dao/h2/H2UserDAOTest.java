@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static utils.TestsUtils.getTestUser;
 
 /**
  * Created by roman on 08.07.2016.
@@ -38,29 +39,6 @@ public class H2UserDAOTest {
     @AfterClass
     public static void afterClass() throws Exception {
         connectionPool.close();
-    }
-
-    private User getTestUser() {
-        User testUser = new User();
-        testUser.setUsername("TestUser");
-        testUser.setFirstName("roman");
-        testUser.setLastName("golyshev");
-        testUser.setPassword("test");
-        testUser.setInfo("My status");
-        testUser.setBirthDate(LocalDate.now());
-        testUser.setRegistrationTime(Instant.now());
-        testUser.setRole(UserRole.ADMIN);
-
-        return testUser;
-    }
-
-    private User getFollower() {
-        User follower = new User();
-        follower.setUsername("follower");
-        follower.setPassword("1111");
-        follower.setRole(UserRole.USER);
-
-        return follower;
     }
 
     @Test
