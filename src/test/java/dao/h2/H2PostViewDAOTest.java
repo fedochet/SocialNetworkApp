@@ -55,35 +55,58 @@ public class H2PostViewDAOTest {
 
         assertTrue(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).isEmpty());
 
-        Post post = new Post();
-        post.setAuthorId(testUser.getId());
-        post.setId(postDAO.create(post));
-        post = postDAO.getById(post.getId()).get();
+        Post post1 = new Post();
+        post1.setAuthorId(testUser.getId());
+        post1.setId(postDAO.create(post1));
+        post1 = postDAO.getById(post1.getId()).get();
 
-        PostView expectedPost = new PostView();
-        expectedPost.setId(post.getId());
-        expectedPost.setText(post.getText());
-        expectedPost.setCreationTime(post.getCreationTime());
-        expectedPost.setAuthorId(post.getAuthorId());
-        expectedPost.setAuthorUsername(testUser.getUsername());
-        expectedPost.setAuthorFirstname(testUser.getFirstName());
-        expectedPost.setAuthorLastname(testUser.getLastName());
-        expectedPost.setLikes(0);
-        expectedPost.setCanLike(true);
+        Post post2 = new Post();
+        post2.setAuthorId(testUser.getId());
+        post2.setId(postDAO.create(post2));
+        post2 = postDAO.getById(post2.getId()).get();
+
+        PostView expectedPost1 = new PostView();
+        expectedPost1.setId(post1.getId());
+        expectedPost1.setText(post1.getText());
+        expectedPost1.setCreationTime(post1.getCreationTime());
+        expectedPost1.setAuthorId(post1.getAuthorId());
+        expectedPost1.setAuthorUsername(testUser.getUsername());
+        expectedPost1.setAuthorFirstname(testUser.getFirstName());
+        expectedPost1.setAuthorLastname(testUser.getLastName());
+        expectedPost1.setLikes(0);
+        expectedPost1.setCanLike(true);
+
+        PostView expectedPost2 = new PostView();
+        expectedPost2.setId(post2.getId());
+        expectedPost2.setText(post2.getText());
+        expectedPost2.setCreationTime(post2.getCreationTime());
+        expectedPost2.setAuthorId(post2.getAuthorId());
+        expectedPost2.setAuthorUsername(testUser.getUsername());
+        expectedPost2.setAuthorFirstname(testUser.getFirstName());
+        expectedPost2.setAuthorLastname(testUser.getLastName());
+        expectedPost2.setLikes(0);
+        expectedPost2.setCanLike(true);
+
 
         assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).size(),
-                is(1));
+                is(2));
+        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).get(1),
+                is(expectedPost1));
         assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).get(0),
-            is(expectedPost));
+                is(expectedPost2));
 
-        likeDAO.addLike(post.getId(), testUser.getId());
-        expectedPost.setLikes(1);
+        likeDAO.addLike(post1.getId(), testUser.getId());
+        expectedPost1.setLikes(1);
+        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).get(1),
+                is(expectedPost1));
         assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).get(0),
-                is(expectedPost));
+                is(expectedPost2));
 
-        expectedPost.setCanLike(false);
+        expectedPost1.setCanLike(false);
+        assertThat(postViewDAO.getAsUserByAuthorId(testUser.getId(), testUser.getId(), -1, 100).get(1),
+                is(expectedPost1));
         assertThat(postViewDAO.getAsUserByAuthorId(testUser.getId(), testUser.getId(), -1, 100).get(0),
-                is(expectedPost));
+                is(expectedPost2));
 
         userDAO.deleteById(testUser.getId());
     }

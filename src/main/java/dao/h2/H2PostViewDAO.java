@@ -27,7 +27,7 @@ public class H2PostViewDAO implements PostViewDAO {
         String sql = "SELECT post_id, post_text, post_creation_time, " +
                 "author_id, author_username, author_firstname, author_lastname, post_likes, " +
                 "(SELECT count(likes.id) " +
-                "FROM likes WHERE likes.post_id=post_id " +
+                "FROM likes WHERE likes.post_id=post_views.post_id " +
                 "AND likes.user_id = ? GROUP BY likes.id) " +
                 "AS canLike " +
                 "FROM post_views " +
