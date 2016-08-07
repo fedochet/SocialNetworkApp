@@ -60,9 +60,9 @@ public class H2PostViewDAO implements PostViewDAO {
                 while (resultSet.next()) {
                     PostView post = new PostView();
 
-                    post.setPostId(resultSet.getInt("post_id"));
-                    post.setPostText(resultSet.getString("post_text"));
-                    post.setPostCreationTime(resultSet.getTimestamp("post_creation_time").toInstant());
+                    post.setId(resultSet.getInt("post_id"));
+                    post.setText(resultSet.getString("post_text"));
+                    post.setCreationTime(resultSet.getTimestamp("post_creation_time").toInstant());
                     post.setAuthorId(resultSet.getInt("author_id"));
                     post.setAuthorUsername(resultSet.getString("author_username"));
                     post.setAuthorFirstname(resultSet.getString("author_firstname"));

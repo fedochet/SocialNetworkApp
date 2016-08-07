@@ -3,10 +3,12 @@ package rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dao.interfaces.PostDAO;
+import dao.interfaces.PostViewDAO;
 import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
-import model.Post;
+import model.PostView;
+import model.User;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by roman on 25.07.2016.
@@ -24,18 +27,15 @@ import java.util.List;
 @Path("/getposts")
 @Produces(MediaType.APPLICATION_JSON)
 public class PostResource {
-    private static PostDAO postDAO;
-    private static UserDAO userDAO;
+    private PostDAO postDAO;
+    private UserDAO userDAO;
+    private PostViewDAO postViewDAO;
 
     @Context
     private void init(ServletContext context) {
-        if (postDAO == null) {
-            postDAO = (PostDAO) context.getAttribute(ServicesProvider.POST_DAO);
-        }
-
-        if (userDAO == null) {
-            userDAO = (UserDAO) context.getAttribute(ServicesProvider.USER_DAO);
-        }
+        postDAO = (PostDAO) context.getAttribute(ServicesProvider.POST_DAO);
+        userDAO = (UserDAO) context.getAttribute(ServicesProvider.USER_DAO);
+        postViewDAO = (PostViewDAO) context.getAttribute(ServicesProvider.POST_VIEW_DAO);
     }
 
     private String objectToJsonString(Object o) throws JsonProcessingException {
@@ -53,7 +53,11 @@ public class PostResource {
     ) {
         log.info("Serving GET rest on {};", request.getServletPath() + request.getPathInfo());
 
-        List<Post> posts = postDAO.getByAuthorId(userId, offset, limit, minId);
+        int sessionUserId
+                = Optional.ofNullable((User)request.getSession().getAttribute("sessionUser"))
+                .map(User::getId).orElse(-1);
+
+        List<PostView> posts = postViewDAO.getAsUserByAuthorId(sessionUserId, userId, offset, limit);
         try {
             String response = objectToJsonString(posts);
             return Response.ok(response).build();
@@ -61,6 +65,5 @@ public class PostResource {
             log.warn("Error while processing json!", e);
             return Response.noContent().build();
         }
-
     }
 }

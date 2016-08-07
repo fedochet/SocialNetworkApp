@@ -10,12 +10,10 @@ import java.time.Instant;
 
 @Data
 public class PostView {
-    private int postId;
-    private int postAuthorId;
+    private int id;
+    private String text;
 
-    private String postText;
-
-    private Instant postCreationTime;
+    private Instant creationTime;
 
     private int authorId;
     private String authorUsername;

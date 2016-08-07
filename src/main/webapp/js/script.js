@@ -1,32 +1,26 @@
 window.addEventListener("DOMContentLoaded", function (event) {
-    window.onscroll = function (ev) {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-            alert("Bottom!");
-        }
-    };
-
-    var posts = document.getElementById("posts");
+    var postsElement = document.getElementById("posts");
 
     var pageUser = {
         userId: document.getElementById("pageUser-Id").textContent,
         username: document.getElementById("pageUser-username").textContent
     };
 
-    function addPostsToTimeline(user, messages) {
-        for (var i = 0; i < messages.length; i++) {
-            var post = messages[i];
+    function addPostsToTimeline(postsToAdd) {
+        for (var i = 0; i < postsToAdd.length; i++) {
+            var post = postsToAdd[i];
             var postHtml = "";
 
             var postDate = epochToDate(post.creationTime.epochSecond);
             postHtml += '<div class="well wall-post row">';
             postHtml += '<div class="col-xs-2"><img src="/images/avatar.png" class="user-post-avatar"></div>';
             postHtml += '<div class="col-xs-10">';
-            postHtml += '<strong>' + user.username + '</strong> ' + postDate;
+            postHtml += '<strong>@' + post.authorUsername + '</strong> ' + postDate;
             postHtml += '<p>' + post.text + '</p>';
             postHtml += '</div>';
             postHtml += '</div>';
 
-            posts.innerHTML += postHtml;
+            postsElement.innerHTML += postHtml;
         }
     }
 
@@ -59,7 +53,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
         }).done(function (receivedPosts) {
             console.log(receivedPosts);
 
-            addPostsToTimeline(user, receivedPosts);
+            addPostsToTimeline(receivedPosts);
 
             function isNoMorePosts(messages) {
                 var lastRequestHadZeroPosts = messages.length == 0;

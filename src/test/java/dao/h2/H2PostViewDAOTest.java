@@ -61,9 +61,9 @@ public class H2PostViewDAOTest {
         post = postDAO.getById(post.getId()).get();
 
         PostView expectedPost = new PostView();
-        expectedPost.setPostId(post.getId());
-        expectedPost.setPostText(post.getText());
-        expectedPost.setPostCreationTime(post.getCreationTime());
+        expectedPost.setId(post.getId());
+        expectedPost.setText(post.getText());
+        expectedPost.setCreationTime(post.getCreationTime());
         expectedPost.setAuthorId(post.getAuthorId());
         expectedPost.setAuthorUsername(testUser.getUsername());
         expectedPost.setAuthorFirstname(testUser.getFirstName());
@@ -99,7 +99,7 @@ public class H2PostViewDAOTest {
         assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).size(), is(100));
         assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), posts.get(50).getId(), 100).size(), is(50));
         assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), posts.get(50).getId(), 10).size(), is(10));
-        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), posts.get(50).getId(), 10).get(0).getPostId(),
+        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), posts.get(50).getId(), 10).get(0).getId(),
                 is(posts.get(50).getId()));
         TestsUtils.deleteAllPostsById(ids, postDAO);
         userDAO.deleteById(testUser.getId());
