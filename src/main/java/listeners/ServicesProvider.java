@@ -78,7 +78,7 @@ public class ServicesProvider implements ServletContextListener {
         User user = new User();
         user.setUsername("test");
         user.setFirstName("John");
-        user.setLastName("Doe");
+        user.setLastName("Does");
         user.setPassword(securityService.encryptPassword("1234"));
 
         userDAO.create(user);
