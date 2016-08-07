@@ -3,8 +3,10 @@ package listeners;
 import common.cp.ConnectionPool;
 import common.cp.SimpleConnectionPool;
 import dao.h2.H2PostDAO;
+import dao.h2.H2PostViewDAO;
 import dao.h2.H2UserDAO;
 import dao.interfaces.PostDAO;
+import dao.interfaces.PostViewDAO;
 import dao.interfaces.UserDAO;
 import model.User;
 import services.SecurityService;
@@ -28,6 +30,7 @@ public class ServicesProvider implements ServletContextListener {
 
     public static final String USER_DAO = UserDAO.class.getName();
     public static final String POST_DAO = PostDAO.class.getName();
+    public static final String POST_VIEW_DAO = PostViewDAO.class.getName();
     public static final String SECURITY_SERVICE = SecurityService.class.getName();
 
     private ConnectionPool connectionPool;
@@ -40,10 +43,12 @@ public class ServicesProvider implements ServletContextListener {
         connectionPool = SimpleConnectionPool.create(propertiesFilePath);
         UserDAO userDAO = new H2UserDAO(connectionPool);
         PostDAO postDAO = new H2PostDAO(connectionPool);
+        PostViewDAO postViewDAO = new H2PostViewDAO(connectionPool);
         SecurityService securityService = new SecurityService();
 
         servletContext.setAttribute(USER_DAO, userDAO);
         servletContext.setAttribute(POST_DAO, postDAO);
+        servletContext.setAttribute(POST_VIEW_DAO, postViewDAO);
         servletContext.setAttribute(SECURITY_SERVICE, securityService);
 
         String scriptFilePath = servletContext.getRealPath(RESOURCES_FILE_PATH + DB_PREPARE_FILE_NAME);
