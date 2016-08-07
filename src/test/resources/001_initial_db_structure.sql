@@ -89,4 +89,5 @@ CREATE OR REPLACE VIEW post_views(
     count(likes.id)
   FROM posts
     JOIN users ON posts.author_id=users.id
-    JOIN likes ON posts.id=likes.post_id;
+    LEFT JOIN likes ON posts.id=likes.post_id
+    GROUP BY posts.id;
