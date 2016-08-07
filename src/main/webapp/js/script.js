@@ -35,20 +35,18 @@ window.addEventListener("DOMContentLoaded", function (event) {
         return array[array.length - 1];
     }
 
-    function loadPosts(user, offsetId, limit, minId) {
+    function loadPosts(user, offsetId, limit) {
 
         offsetId = offsetId || -1;
         limit = limit || 5;
-        minId = minId || -1;
 
         $.ajax({
             url: "/rest/getposts",
             method: "GET",
             data: {
-                userId: user.userId,
+                authorId: user.userId,
                 offsetId: offsetId,
-                limit: limit,
-                minId: minId
+                limit: limit
             }
         }).done(function (receivedPosts) {
             console.log(receivedPosts);

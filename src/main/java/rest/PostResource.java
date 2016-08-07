@@ -46,10 +46,9 @@ public class PostResource {
 
     @GET
     public Response getPosts(
-            @QueryParam("userId") int userId,
+            @QueryParam("authorId") int authorId,
             @DefaultValue("-1") @QueryParam("offsetId") int offset,
-            @DefaultValue("20") @QueryParam("limit") int limit,
-            @DefaultValue("-1") @QueryParam("minId") int minId
+            @DefaultValue("20") @QueryParam("limit") int limit
     ) {
         log.info("Serving GET rest on {};", request.getServletPath() + request.getPathInfo());
 
@@ -57,7 +56,7 @@ public class PostResource {
                 = Optional.ofNullable((User)request.getSession().getAttribute("sessionUser"))
                 .map(User::getId).orElse(-1);
 
-        List<PostView> posts = postViewDAO.getAsUserByAuthorId(sessionUserId, userId, offset, limit);
+        List<PostView> posts = postViewDAO.getAsUserByAuthorId(sessionUserId, authorId, offset, limit);
         try {
             String response = objectToJsonString(posts);
             return Response.ok(response).build();
