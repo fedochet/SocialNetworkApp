@@ -4,12 +4,12 @@ import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
+import utils.SessionUtils;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,27 +33,22 @@ public class LoginFilter implements Filter {
         doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
 
-    private Optional<User> getUser(HttpSession session) {
-        return Optional.ofNullable((User) session.getAttribute("sessionUser"));
-    }
-
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         log.info("Filtering {} path", request.getServletPath());
 
         Optional<User> userOpt
-                = Optional.ofNullable(request.getSession())
-                .flatMap(this::getUser)
+                = SessionUtils.getSessionUser(request.getSession(false))
                 .flatMap(this::checkAndUpdateUser);
 
         if (userOpt.isPresent()) {
             log.info("Logged as '{}'", userOpt.get().getUsername());
-            request.getSession().setAttribute("sessionUser", userOpt.get());
+            SessionUtils.setSessionUser(request.getSession(), userOpt.get());
             chain.doFilter(request, response);
             return;
         }
 
         log.info("No validated user is attached to session; redirecting to landing page");
-        request.getSession().removeAttribute("sessionUser");
+        SessionUtils.clearSessionUser(request.getSession(false));
         request.getRequestDispatcher("/").forward(request, response);
     }
 

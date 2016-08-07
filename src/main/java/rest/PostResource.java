@@ -7,15 +7,16 @@ import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.PostView;
 import model.User;
+import utils.SessionUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by roman on 25.07.2016.
@@ -37,6 +38,7 @@ public class PostResource {
     }
 
     @Context HttpServletRequest request;
+    @Context HttpSession session;
 
     @GET
     @Path("/getposts")
@@ -47,9 +49,7 @@ public class PostResource {
     ) {
         log.info("Serving GET rest on {};", request.getServletPath() + request.getPathInfo());
 
-        int sessionUserId
-                = Optional.ofNullable((User)request.getSession().getAttribute("sessionUser"))
-                .map(User::getId).orElse(-1);
+        int sessionUserId = SessionUtils.getSessionUser(session).map(User::getId).orElse(-1);
 
         List<PostView> posts = postViewDAO.getAsUserByAuthorId(sessionUserId, authorId, offset, limit);
         try {
