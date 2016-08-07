@@ -41,7 +41,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
         limit = limit || 5;
 
         $.ajax({
-            url: "/rest/getposts",
+            url: "/rest/posts/getposts",
             method: "GET",
             data: {
                 authorId: user.userId,

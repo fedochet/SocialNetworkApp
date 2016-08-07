@@ -2,9 +2,7 @@ package rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dao.interfaces.PostDAO;
 import dao.interfaces.PostViewDAO;
-import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.PostView;
@@ -24,17 +22,13 @@ import java.util.Optional;
  */
 
 @Slf4j
-@Path("/getposts")
+@Path("/posts")
 @Produces(MediaType.APPLICATION_JSON)
 public class PostResource {
-    private PostDAO postDAO;
-    private UserDAO userDAO;
     private PostViewDAO postViewDAO;
 
     @Context
     private void init(ServletContext context) {
-        postDAO = (PostDAO) context.getAttribute(ServicesProvider.POST_DAO);
-        userDAO = (UserDAO) context.getAttribute(ServicesProvider.USER_DAO);
         postViewDAO = (PostViewDAO) context.getAttribute(ServicesProvider.POST_VIEW_DAO);
     }
 
@@ -45,6 +39,7 @@ public class PostResource {
     @Context HttpServletRequest request;
 
     @GET
+    @Path("/getposts")
     public Response getPosts(
             @QueryParam("authorId") int authorId,
             @DefaultValue("-1") @QueryParam("offsetId") int offset,
