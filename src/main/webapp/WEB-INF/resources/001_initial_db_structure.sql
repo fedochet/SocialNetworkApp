@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS post_types;
-DROP TABLE IF EXISTS user_roles;
+DROP VIEW IF EXISTS post_views;
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS post_comments;
-DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS user_followers;
-DROP VIEW IF EXISTS post_views;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS post_types;
+DROP TABLE IF EXISTS user_roles;
 
 CREATE TABLE user_roles (
   id INT PRIMARY KEY,
@@ -70,7 +70,7 @@ CREATE TABLE user_followers(
   UNIQUE (user_id, follower_id)
 );
 
-CREATE OR REPLACE VIEW post_views(
+CREATE VIEW post_views(
     post_id,
     post_text,
     post_creation_time,
@@ -78,7 +78,7 @@ CREATE OR REPLACE VIEW post_views(
     author_username,
     author_firstname,
     author_lastname,
-    likes) AS
+    post_likes) AS
   SELECT posts.id,
     posts.text,
     posts.creation_time,
@@ -89,4 +89,5 @@ CREATE OR REPLACE VIEW post_views(
     count(likes.id)
   FROM posts
     JOIN users ON posts.author_id=users.id
-    JOIN likes ON posts.id=likes.post_id;
+    LEFT JOIN likes ON posts.id=likes.post_id
+  GROUP BY posts.id;

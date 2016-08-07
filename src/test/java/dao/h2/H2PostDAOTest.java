@@ -11,11 +11,16 @@ import utils.SQLUtils;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static utils.TestsUtils.add100Posts;
+import static utils.TestsUtils.deleteAllPostsById;
 
 /**
  * Created by roman on 08.07.2016.
@@ -173,6 +178,7 @@ public class H2PostDAOTest {
         postDAO.deleteById(postId);
     }
 
+    @Test
     public void youCanGetAllPostsOfUser() {
         User anotherUser = new User();
         anotherUser.setUsername("test_username");
@@ -219,27 +225,9 @@ public class H2PostDAOTest {
         userDAO.deleteById(anotherUser.getId());
     }
 
-    private Set<Integer> add100Posts() {
-        Set<Integer> newPosts = new HashSet<>();
-
-        for (int i = 0; i<100; i++) {
-            Post post = new Post();
-            post.setAuthorId(testUser.getId());
-
-            newPosts.add(postDAO.create(post));
-        }
-
-        return newPosts;
-    }
-
-    private void deleteAllPostsById(Set<Integer> postIds) {
-        postIds.forEach(postDAO::deleteById);
-    }
-
     @Test
     public void youCanGetPostsWithOffsetId() {
-        Set<Integer> ids = add100Posts();
-
+        Set<Integer> ids = add100Posts(testUser, postDAO);
 
         List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
         assertThat(postDAO.getByAuthorId(testUser.getId(), -1, 100, -1), is(allPosts));
@@ -251,12 +239,12 @@ public class H2PostDAOTest {
 
         assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(99).getId(), 100, -1), is(allPosts.subList(99,100)));
 
-        deleteAllPostsById(ids);
+        deleteAllPostsById(ids, postDAO);
     }
 
     @Test
     public void youCanGetPostsWithOffsetIdAndMaxId() {
-        Set<Integer> ids = add100Posts();
+        Set<Integer> ids = add100Posts(testUser, postDAO);
 
         List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
 
@@ -267,12 +255,12 @@ public class H2PostDAOTest {
         assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(10).getId(), 100, allPosts.get(90).getId()),
                 is(allPosts.subList(10, 90)));
 
-        deleteAllPostsById(ids);
+        deleteAllPostsById(ids, postDAO);
     }
 
     @Test
     public void youCanGetPostsWithOffsetIdAndLimitAndMaxId() {
-        Set<Integer> ids = add100Posts();
+        Set<Integer> ids = add100Posts(testUser, postDAO);
         List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
 
         assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(10).getId(), 100, allPosts.get(90).getId()),
@@ -280,13 +268,13 @@ public class H2PostDAOTest {
 
         assertThat(postDAO.getByAuthorId(testUser.getId(), allPosts.get(10).getId(), 40, allPosts.get(90).getId()),
                 is(allPosts.subList(10, 50)));
-        deleteAllPostsById(ids);
+        deleteAllPostsById(ids, postDAO);
     }
 
     @Test
     public void youCanGetPostsWithOffsetAndLimit() {
 
-        Set<Integer> ids = add100Posts();
+        Set<Integer> ids = add100Posts(testUser, postDAO);
 
         List<Post> allPosts = postDAO.getByAuthorId(testUser.getId());
         assertThat(allPosts.size(), is(100));
@@ -309,7 +297,7 @@ public class H2PostDAOTest {
                 .collect(Collectors.toList()),
             is(allPosts));
 
-        deleteAllPostsById(ids);
+        deleteAllPostsById(ids, postDAO);
     }
 
 

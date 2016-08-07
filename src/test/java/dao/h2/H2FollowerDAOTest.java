@@ -57,6 +57,8 @@ public class H2FollowerDAOTest {
         assertFalse(followerDAO.isFollowing(testUser.getId(), follower.getId()));
         assertFalse(followerDAO.removeFollower(testUser.getId(), follower.getId()));
 
+        userDAO.deleteById(testUser.getId());
+        userDAO.deleteById(follower.getId());
 //        followerDAO.deleteById(testUser.getId());
 //        followerDAO.deleteById(follower.getId());
     }

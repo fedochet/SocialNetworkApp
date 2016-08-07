@@ -11,6 +11,9 @@ import org.junit.Test;
 import utils.SQLUtils;
 import utils.TestsUtils;
 
+import java.util.List;
+import java.util.Set;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -82,6 +85,23 @@ public class H2PostViewDAOTest {
         assertThat(postViewDAO.getAsUserByAuthorId(testUser.getId(), testUser.getId(), -1, 100).get(0),
                 is(expectedPost));
 
+        userDAO.deleteById(testUser.getId());
+    }
+
+    @Test
+    public void youCanGetPostViewsWithOffsetAndLimit() {
+        User testUser = TestsUtils.getTestUser();
+        testUser.setId(userDAO.create(testUser));
+
+        Set<Integer> ids = TestsUtils.add100Posts(testUser, postDAO);
+        List<Post> posts = postDAO.getByAuthorId(testUser.getId());
+
+        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), -1, 100).size(), is(100));
+        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), posts.get(50).getId(), 100).size(), is(50));
+        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), posts.get(50).getId(), 10).size(), is(10));
+        assertThat(postViewDAO.getAsUserByAuthorId(-1, testUser.getId(), posts.get(50).getId(), 10).get(0).getPostId(),
+                is(posts.get(50).getId()));
+        TestsUtils.deleteAllPostsById(ids, postDAO);
         userDAO.deleteById(testUser.getId());
     }
 
