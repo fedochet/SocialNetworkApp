@@ -7,20 +7,91 @@ window.addEventListener("DOMContentLoaded", function (event) {
     };
 
     function addPostsToTimeline(postsToAdd) {
+        function createLikeButton(post) {
+            var likeButton = document.createElement("button");
+            likeButton.type = 'button';
+            likeButton.className = 'btn pull-right ';
+            if (post.canLike) {
+                likeButton.className += 'btn-default';
+            } else {
+                likeButton.className += 'btn-primary';
+            }
+
+            likeButton.innerHTML += 'Like <span class="glyphicon glyphicon-thumbs-up " aria-hidden="true"></span> ';
+            var badge = document.createElement("span");
+            badge.className = "badge";
+            if (post.likes) {
+                badge.innerText = post.likes;
+            }
+            likeButton.appendChild(badge);
+
+            likeButton.addEventListener('click', function (event) {
+                function updateButton() {
+                    if (post.canLike) {
+                        post.likes++;
+                    } else {
+                        post.likes--;
+                    }
+
+                    post.canLike = !(post.canLike);
+                    likeButton.className = 'btn pull-right ';
+                    if (post.canLike) {
+                        likeButton.className += 'btn-default';
+                    } else {
+                        likeButton.className += 'btn-primary';
+                    }
+
+                    if (post.likes!=0) {
+                        badge.innerText = post.likes;
+                    } else {
+                        badge.innerText = "";
+                    }
+                }
+
+                if (post.canLike) {
+                    $.ajax({
+                        url: '/rest/likes/addlike',
+                        headers: {'Content-type': 'application/json'},
+                        method: 'post',
+                        data: JSON.stringify({postId: post.id})
+                    }).done(updateButton);
+                } else {
+                    $.ajax({
+                        url: '/rest/likes/removelike',
+                        headers: {'Content-type': 'application/json'},
+                        method: 'delete',
+                        data: JSON.stringify({postId: post.id})
+                    }).done(updateButton);
+                }
+            });
+
+            return likeButton;
+        }
+
         for (var i = 0; i < postsToAdd.length; i++) {
             var post = postsToAdd[i];
             var postHtml = "";
 
-            var postDate = epochToDate(post.creationTime.epochSecond);
-            postHtml += '<div class="well wall-post row">';
-            postHtml += '<div class="col-xs-2"><img src="/images/avatar.png" class="user-post-avatar"></div>';
-            postHtml += '<div class="col-xs-10">';
-            postHtml += '<strong>@' + post.authorUsername + '</strong> ' + postDate;
-            postHtml += '<p>' + post.text + '</p>';
-            postHtml += '</div>';
-            postHtml += '</div>';
+            var postElement = document.createElement("div");
+            postElement.className = "well wall-post row";
 
-            postsElement.innerHTML += postHtml;
+            var postDate = epochToDate(post.creationTime.epochSecond);
+
+            postElement.innerHTML += '<div class="col-xs-2"><img src="/images/avatar.png" class="user-post-avatar"></div>';
+            postElement.innerHTML += '<div class="col-xs-10">';
+            postElement.innerHTML += '<strong>@' + post.authorUsername + '</strong> ' + postDate;
+            postElement.innerHTML += '<p>' + post.text + '</p>';
+            postElement.innerHTML += '</div>';
+
+            var likeBtnDiv = document.createElement('div');
+
+            var likeButton = createLikeButton(post);
+
+            likeBtnDiv.className = "col-xs-12";
+
+            likeBtnDiv.appendChild(likeButton);
+            postElement.appendChild(likeBtnDiv);
+            postsElement.appendChild(postElement);
         }
     }
 

@@ -59,8 +59,6 @@ public class H2FollowerDAOTest {
 
         userDAO.deleteById(testUser.getId());
         userDAO.deleteById(follower.getId());
-//        followerDAO.deleteById(testUser.getId());
-//        followerDAO.deleteById(follower.getId());
     }
 
     @Test

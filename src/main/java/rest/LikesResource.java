@@ -54,8 +54,11 @@ public class LikesResource {
 
         try {
             log.info("Trying to add '{}'s like to post with id '{}'", sessionUser.getUsername(), likeJson.postId);
-            likeDAO.addLike(likeJson.postId, sessionUser.getId());
-            log.info("Success! '{}'s like is added to post with id '{}'", sessionUser.getUsername(), likeJson.postId);
+            if (likeDAO.addLike(likeJson.postId, sessionUser.getId())) {
+                log.info("Success! '{}'s like is added to post with id '{}'", sessionUser.getUsername(), likeJson.postId);
+            } else {
+                log.warn("'{}'s like wasn't added to post with id '{}'! It's already been there", sessionUser.getUsername(), likeJson.postId);
+            }
             return Response.ok().build();
         } catch (RuntimeException e) {
             log.warn("Error occured while adding "+sessionUser.getUsername()+" like to post with id "+ likeJson.postId, e);
@@ -80,9 +83,11 @@ public class LikesResource {
 
         try {
             log.info("Trying to delete '{}'s like from post with id '{}'", sessionUser.getUsername(), likeJson.postId);
-            likeDAO.removeLike(likeJson.postId, sessionUser.getId());
-            log.info("Success! '{}'s like is removed from post with id '{}'", sessionUser.getUsername(), likeJson.postId);
-            return Response.ok().build();
+            if (likeDAO.removeLike(likeJson.postId, sessionUser.getId())) {
+                log.info("Success! '{}'s like is deleted from post with id '{}'", sessionUser.getUsername(), likeJson.postId);
+            } else {
+                log.warn("'{}'s like wasn't deleted from post with id '{}'! There was no such like", sessionUser.getUsername(), likeJson.postId);
+            } return Response.ok().build();
         } catch (RuntimeException e) {
             log.warn("Error occured while deleting "+sessionUser.getUsername()+" like from post with id "+ likeJson.postId, e);
             return Response.serverError().entity("Error occured while deleting like").build();
