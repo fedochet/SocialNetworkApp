@@ -19,7 +19,7 @@ import java.util.Optional;
  * Created by roman on 07.08.2016.
  */
 
-@Path("/likes")
+@Path("/secure/likes")
 @Slf4j
 public class LikesResource {
     private final LikeDAO likeDAO;
@@ -44,7 +44,7 @@ public class LikesResource {
     public Response  addLike(LikeJson likeJson) {
         log.info("Serving POST rest on {};", request.getServletPath() + request.getPathInfo());
 
-        Optional<User> sessionUserOpt = SessionUtils.getSessionUser(request.getSession(false));
+        Optional<User> sessionUserOpt = SessionUtils.getSessionUserOpt(request.getSession(false));
         if (!sessionUserOpt.isPresent()) {
             log.warn("No user is attached to session; cannot add like!");
             return Response.status(Response.Status.FORBIDDEN)
@@ -73,7 +73,7 @@ public class LikesResource {
     public Response removeLike(LikeJson likeJson) {
         log.info("Serving DELETE rest on {};", request.getServletPath() + request.getPathInfo());
 
-        Optional<User> sessionUserOpt = SessionUtils.getSessionUser(request.getSession(false));
+        Optional<User> sessionUserOpt = SessionUtils.getSessionUserOpt(request.getSession(false));
         if (!sessionUserOpt.isPresent()) {
             log.warn("No user is attached to session; cannot delete like!");
             return Response.status(Response.Status.FORBIDDEN)

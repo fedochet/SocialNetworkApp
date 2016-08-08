@@ -12,9 +12,13 @@ public class SessionUtils {
 
     private static final String SESSION_USER_KEY = "sessionUser";
 
-    public static Optional<User> getSessionUser(HttpSession session) {
+    public static Optional<User> getSessionUserOpt(HttpSession session) {
         return Optional.ofNullable(session)
                 .map(s -> (User)s.getAttribute(SESSION_USER_KEY));
+    }
+
+    public static User getSessionUser(HttpSession session) {
+        return getSessionUserOpt(session).orElse(null);
     }
 
     public static void setSessionUser(HttpSession session, User sessionUser) {

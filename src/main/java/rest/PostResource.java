@@ -46,7 +46,7 @@ public class PostResource {
     ) {
         log.info("Serving GET rest on {};", request.getServletPath() + request.getPathInfo());
 
-        int sessionUserId = SessionUtils.getSessionUser(request.getSession(false)).map(User::getId).orElse(-1);
+        int sessionUserId = SessionUtils.getSessionUserOpt(request.getSession(false)).map(User::getId).orElse(-1);
 
         List<PostView> posts = postViewDAO.getAsUserByAuthorId(sessionUserId, authorId, offset, limit);
         try {

@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 
 @Slf4j
-@WebFilter(urlPatterns = {"/home", "/addpost", "/settings", "/secure/*"})
+@WebFilter(urlPatterns = {"/home", "/addpost", "/settings", "/secure/*", "/rest/secure/*"})
 public class LoginFilter implements Filter {
     private static UserDAO userDAO;
 
@@ -37,7 +37,7 @@ public class LoginFilter implements Filter {
         log.info("Filtering {} path", request.getServletPath());
 
         Optional<User> userOpt
-                = SessionUtils.getSessionUser(request.getSession(false))
+                = SessionUtils.getSessionUserOpt(request.getSession(false))
                 .flatMap(this::checkAndUpdateUser);
 
         if (userOpt.isPresent()) {

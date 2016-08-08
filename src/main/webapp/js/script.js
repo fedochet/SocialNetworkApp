@@ -50,14 +50,14 @@ window.addEventListener("DOMContentLoaded", function (event) {
 
                 if (post.canLike) {
                     $.ajax({
-                        url: '/rest/likes/addlike',
+                        url: '/rest/secure/likes/addlike',
                         headers: {'Content-type': 'application/json'},
                         method: 'post',
                         data: JSON.stringify({postId: post.id})
                     }).done(updateButton);
                 } else {
                     $.ajax({
-                        url: '/rest/likes/removelike',
+                        url: '/rest/secure/likes/removelike',
                         headers: {'Content-type': 'application/json'},
                         method: 'delete',
                         data: JSON.stringify({postId: post.id})
