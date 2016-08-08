@@ -9,10 +9,7 @@ import utils.SessionUtils;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -63,6 +60,32 @@ public class LikesResource {
         } catch (RuntimeException e) {
             log.warn("Error occured while adding "+sessionUser.getUsername()+" like to post with id "+ likeJson.postId, e);
             return Response.serverError().entity("Error occured while adding like").build();
+        }
+    }
+
+    @DELETE
+    @Path("/removelike")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeLike(LikeJson likeJson) {
+        log.info("Serving DELETE rest on {};", request.getServletPath() + request.getPathInfo());
+
+        Optional<User> sessionUserOpt = SessionUtils.getSessionUser(request.getSession(false));
+        if (!sessionUserOpt.isPresent()) {
+            log.warn("No user is attached to session; cannot delete like!");
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("User is not authorised!").build();
+        }
+        User sessionUser = sessionUserOpt.get();
+
+        try {
+            log.info("Trying to delete '{}'s like from post with id '{}'", sessionUser.getUsername(), likeJson.postId);
+            likeDAO.removeLike(likeJson.postId, sessionUser.getId());
+            log.info("Success! '{}'s like is removed from post with id '{}'", sessionUser.getUsername(), likeJson.postId);
+            return Response.ok().build();
+        } catch (RuntimeException e) {
+            log.warn("Error occured while deleting "+sessionUser.getUsername()+" like from post with id "+ likeJson.postId, e);
+            return Response.serverError().entity("Error occured while deleting like").build();
         }
     }
 }
