@@ -2,14 +2,8 @@ package listeners;
 
 import common.cp.ConnectionPool;
 import common.cp.SimpleConnectionPool;
-import dao.h2.H2LikeDAO;
-import dao.h2.H2PostDAO;
-import dao.h2.H2PostViewDAO;
-import dao.h2.H2UserDAO;
-import dao.interfaces.LikeDAO;
-import dao.interfaces.PostDAO;
-import dao.interfaces.PostViewDAO;
-import dao.interfaces.UserDAO;
+import dao.h2.*;
+import dao.interfaces.*;
 import model.User;
 import services.SecurityService;
 import utils.SQLUtils;
@@ -18,6 +12,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by roman on 14.07.2016.
@@ -33,10 +30,32 @@ public class ServicesProvider implements ServletContextListener {
     public static final String USER_DAO = UserDAO.class.getName();
     public static final String POST_DAO = PostDAO.class.getName();
     public static final String LIKE_DAO = LikeDAO.class.getName();
+    public static final String FOLLOWER_DAO = FollowerDAO.class.getName();
     public static final String POST_VIEW_DAO = PostViewDAO.class.getName();
+
     public static final String SECURITY_SERVICE = SecurityService.class.getName();
 
     private ConnectionPool connectionPool;
+
+    private Map<String, Object> getServices(ConnectionPool connectionPool) {
+        Map<String, Object> result = new HashMap<>();
+
+        UserDAO userDAO = new H2UserDAO(connectionPool);
+        PostDAO postDAO = new H2PostDAO(connectionPool);
+        LikeDAO likeDAO = new H2LikeDAO(connectionPool);
+        FollowerDAO followerDAO = new H2FollowerDAO(connectionPool);
+        PostViewDAO postViewDAO = new H2PostViewDAO(connectionPool);
+        SecurityService securityService = new SecurityService();
+
+        result.put(USER_DAO, userDAO);
+        result.put(POST_DAO, postDAO);
+        result.put(LIKE_DAO, likeDAO);
+        result.put(FOLLOWER_DAO, followerDAO);
+        result.put(POST_VIEW_DAO, postViewDAO);
+        result.put(SECURITY_SERVICE, securityService);
+
+        return Collections.unmodifiableMap(result);
+    }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -44,17 +63,9 @@ public class ServicesProvider implements ServletContextListener {
         String propertiesFilePath = servletContext.getRealPath(RESOURCES_FILE_PATH + DB_PROPERTIES_FILE_NAME);
 
         connectionPool = SimpleConnectionPool.create(propertiesFilePath);
-        UserDAO userDAO = new H2UserDAO(connectionPool);
-        PostDAO postDAO = new H2PostDAO(connectionPool);
-        LikeDAO likeDAO = new H2LikeDAO(connectionPool);
-        PostViewDAO postViewDAO = new H2PostViewDAO(connectionPool);
-        SecurityService securityService = new SecurityService();
 
-        servletContext.setAttribute(USER_DAO, userDAO);
-        servletContext.setAttribute(POST_DAO, postDAO);
-        servletContext.setAttribute(LIKE_DAO, likeDAO);
-        servletContext.setAttribute(POST_VIEW_DAO, postViewDAO);
-        servletContext.setAttribute(SECURITY_SERVICE, securityService);
+        Map<String, Object> services = getServices(connectionPool);
+        services.forEach(servletContext::setAttribute);
 
         String scriptFilePath = servletContext.getRealPath(RESOURCES_FILE_PATH + DB_PREPARE_FILE_NAME);
         SQLUtils.executeScript(connectionPool, scriptFilePath);
