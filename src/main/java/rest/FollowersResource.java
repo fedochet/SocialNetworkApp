@@ -8,10 +8,7 @@ import utils.SessionUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,9 +29,14 @@ public class FollowersResource {
     @Context
     HttpServletRequest request;
 
+    public static class SubscribeJson {
+        public int userId;
+    }
+
     @POST
     @Path("/subscribe")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response subscribe(SubscribeJson json) {
         log.info("Serving POST rest on {} path", request.getServletPath() + request.getPathInfo());
 
@@ -86,7 +88,4 @@ public class FollowersResource {
         }
     }
 
-    public class SubscribeJson {
-        public int userId;
-    }
 }

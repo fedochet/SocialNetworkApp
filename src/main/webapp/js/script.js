@@ -6,6 +6,48 @@ window.addEventListener("DOMContentLoaded", function (event) {
         username: document.getElementById("pageUser-username").textContent
     };
 
+    var sessionUser = {
+        canFollow: document.getElementById("canFollow").textContent == 'true'
+    };
+
+    var followButton = document.getElementById("follow_button");
+    if (followButton!=undefined) {
+        followButton.onclick = function () {
+            function switchFollowButton() {
+                followButton.className = "btn ";
+                if (sessionUser.canFollow) {
+                    followButton.className += "btn-primary";
+                    followButton.innerText = "Following " + pageUser.username
+                } else {
+                    followButton.className += "btn-default";
+                    followButton.innerText = "Follow " + pageUser.username
+                }
+                sessionUser.canFollow = !(sessionUser.canFollow);
+            }
+
+            if (sessionUser.userId == 0) {
+                console.log("No session is attached; should redirect to login page!");
+                return;
+            }
+
+            if (sessionUser.canFollow) {
+                $.ajax({
+                    url: '/rest/secure/followers/subscribe',
+                    headers: {'Content-type': 'application/json'},
+                    method: 'post',
+                    data: JSON.stringify({userId: pageUser.userId})
+                }).done(switchFollowButton);
+            } else {
+                $.ajax({
+                    url: '/rest/secure/followers/unsubscribe',
+                    headers: {'Content-type': 'application/json'},
+                    method: 'delete',
+                    data: JSON.stringify({userId: pageUser.userId})
+                }).done(switchFollowButton);
+            }
+        }
+    }
+
     function addPostsToTimeline(postsToAdd) {
         function createLikeButton(post) {
             var likeButton = document.createElement("button");

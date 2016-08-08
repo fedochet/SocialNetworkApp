@@ -1,7 +1,10 @@
 package controllers;
 
+import dao.interfaces.FollowerDAO;
+import listeners.ServicesProvider;
 import lombok.extern.slf4j.Slf4j;
 import model.User;
+import utils.SessionUtils;
 import validators.UsernameValidator;
 
 import javax.servlet.RequestDispatcher;
@@ -19,7 +22,8 @@ import java.util.Optional;
 @WebServlet(urlPatterns = "/user/*")
 public class UserPageServlet extends BaseServlet {
 
-    RequestDispatcher userPageJSPDisspatcher;
+    private RequestDispatcher userPageJSPDisspatcher;
+    private FollowerDAO followerDAO;
 
     private static String removeLeadingSlash(String path) {
         return path.substring(1);
@@ -28,6 +32,7 @@ public class UserPageServlet extends BaseServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+        followerDAO = (FollowerDAO) getServletContext().getAttribute(ServicesProvider.FOLLOWER_DAO);
         userPageJSPDisspatcher = getServletContext().getRequestDispatcher("/WEB-INF/user_page.jsp");
     }
 
@@ -50,6 +55,15 @@ public class UserPageServlet extends BaseServlet {
 
         log.info("User '{}' exists; forwarding to user_page.jsp", userOpt.get().getUsername());
         req.setAttribute("pageUser", userOpt.get());
+
+        boolean canFollow
+                = SessionUtils.getSessionUserOpt(req.getSession())
+                        .map(User::getId)
+                        .map(id -> !followerDAO.isFollowing(userOpt.get().getId(), id))
+                        .orElse(true);
+
+        req.setAttribute("canFollow", canFollow);
+
         userPageJSPDisspatcher.forward(req, resp);
     }
 }

@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:useBean id="pageUser" scope="request" type="model.User"/>
+<jsp:useBean id="canFollow" scope="request" type="java.lang.Boolean"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -26,6 +27,7 @@
 <body>
 <header>
     <div hidden id="pageUser-Id">${pageUser.id}</div>
+    <div hidden id="canFollow">${canFollow}</div>
 
     <nav id="header-nav" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
@@ -64,6 +66,12 @@
                 </c:if>
                 <div class="clearfix"></div>
                 <p>${pageUser.info}</p>
+                <c:if test="${canFollow}">
+                    <button type="button" class="btn btn-default" id="follow_button">Follow @${pageUser.username}</button>
+                </c:if>
+                <c:if test="${not canFollow}">
+                    <button type="button" class="btn btn-primary" id="follow_button">Following @${pageUser.username}</button>
+                </c:if>
             </div>
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
