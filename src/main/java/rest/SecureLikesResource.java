@@ -21,10 +21,10 @@ import java.util.Optional;
 
 @Path("/secure/likes")
 @Slf4j
-public class LikesResource {
+public class SecureLikesResource {
     private final LikeDAO likeDAO;
 
-    public LikesResource(@Context ServletContext context) {
+    public SecureLikesResource(@Context ServletContext context) {
         likeDAO = (LikeDAO) context.getAttribute(ServicesProvider.LIKE_DAO);
     }
 

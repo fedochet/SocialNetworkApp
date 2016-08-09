@@ -22,10 +22,10 @@ import java.util.List;
  */
 @Slf4j
 @Path("/secure/timeline")
-public class TimelineResource {
+public class SecureTimelineResource {
     private final PostViewDAO postViewDAO;
 
-    public TimelineResource(@Context ServletContext context) {
+    public SecureTimelineResource(@Context ServletContext context) {
         postViewDAO = (PostViewDAO) context.getAttribute(ServicesProvider.POST_VIEW_DAO);
     }
 

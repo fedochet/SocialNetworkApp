@@ -19,10 +19,10 @@ import javax.ws.rs.core.Response;
 
 @Slf4j
 @Path("/secure/followers")
-public class FollowersResource {
+public class SecureFollowersResource {
     private final FollowerDAO followerDAO;
 
-    public FollowersResource(@Context ServletContext context) {
+    public SecureFollowersResource(@Context ServletContext context) {
         followerDAO = (FollowerDAO) context.getAttribute(ServicesProvider.FOLLOWER_DAO);
     }
 
