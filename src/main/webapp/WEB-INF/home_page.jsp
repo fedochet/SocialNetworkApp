@@ -86,8 +86,8 @@
                 </div>
             </div>
             <div>
-                <h1>Posts</h1>
-                <div id="posts"></div>
+                <h1>News</h1>
+                <div id="timeline"></div>
             </div>
         </div>
     </div>

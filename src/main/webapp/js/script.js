@@ -1,17 +1,17 @@
 window.addEventListener("DOMContentLoaded", function (event) {
     var postsElement = document.getElementById("posts");
+    var timelineElement = document.getElementById("timeline");
 
     var pageUser = {
         userId: document.getElementById("pageUser-Id").textContent,
         username: document.getElementById("pageUser-username").textContent
     };
 
-    var sessionUser = {
-        canFollow: document.getElementById("canFollow").textContent == 'true'
-    };
-
     var followButton = document.getElementById("follow_button");
-    if (followButton!=undefined) {
+    if (followButton) {
+        var sessionUser = {
+            canFollow: document.getElementById("canFollow").textContent == 'true'
+        };
         followButton.onclick = function () {
             function switchFollowButton() {
                 followButton.className = "btn ";
@@ -48,7 +48,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
         }
     }
 
-    function addPostsToTimeline(postsToAdd) {
+    function addPostsToElement(postsToAdd, element) {
         function createLikeButton(post) {
             var likeButton = document.createElement("button");
             likeButton.type = 'button';
@@ -133,7 +133,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
 
             likeBtnDiv.appendChild(likeButton);
             postElement.appendChild(likeBtnDiv);
-            postsElement.appendChild(postElement);
+            element.appendChild(postElement);
         }
     }
 
@@ -146,6 +146,42 @@ window.addEventListener("DOMContentLoaded", function (event) {
 
     function lastElement(array) {
         return array[array.length - 1];
+    }
+
+    function isNoMorePosts(messages) {
+        var lastRequestHadZeroPosts = messages.length == 0;
+        var isLastPostWereLastPostInDB = lastElement(messages).id == 1;
+
+        return lastRequestHadZeroPosts || isLastPostWereLastPostInDB;
+    }
+
+    function loadTimeline(offsetId, limit) {
+
+        offsetId = offsetId || -1;
+        limit = limit || 5;
+
+        $.ajax({
+            url: "/rest/secure/timeline/gettimeline",
+            method: "GET",
+            data: {
+                offsetId: offsetId,
+                limit: limit
+            }
+        }).done(function (receivedPosts) {
+            console.log(receivedPosts);
+
+            addPostsToElement(receivedPosts, timelineElement);
+
+            if (isNoMorePosts(receivedPosts)) {
+                window.onscroll = null;
+            } else {
+                window.onscroll = function (ev) {
+                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                        loadTimeline(user, lastElement(receivedPosts).id - 1, 5)
+                    }
+                };
+            }
+        });
     }
 
     function loadPosts(user, offsetId, limit) {
@@ -164,14 +200,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
         }).done(function (receivedPosts) {
             console.log(receivedPosts);
 
-            addPostsToTimeline(receivedPosts);
-
-            function isNoMorePosts(messages) {
-                var lastRequestHadZeroPosts = messages.length == 0;
-                var isLastPostWereLastPostInDB = lastElement(messages).id == 1;
-
-                return lastRequestHadZeroPosts || isLastPostWereLastPostInDB;
-            }
+            addPostsToElement(receivedPosts, postsElement);
 
             if (isNoMorePosts(receivedPosts)) {
                 window.onscroll = null;
@@ -185,5 +214,11 @@ window.addEventListener("DOMContentLoaded", function (event) {
         });
     }
 
-    loadPosts(pageUser, -1, 5);
+    if (postsElement) {
+        loadPosts(pageUser, -1, 5);
+    }
+
+    if (timelineElement) {
+        loadTimeline(-1, 5)
+    }
 });
