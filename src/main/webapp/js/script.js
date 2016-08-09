@@ -119,11 +119,20 @@ window.addEventListener("DOMContentLoaded", function (event) {
 
             var postDate = epochToDate(post.creationTime.epochSecond);
 
+            var userInfoDiv = document.createElement("div");
+            userInfoDiv.className = "col-xs-10";
+
+            var usernameHref = document.createElement("a");
+            usernameHref.href = "/user/" + post.authorUsername;
+            usernameHref.innerHTML = '<strong>@' + post.authorUsername + '</strong>';
+
+            userInfoDiv.appendChild(usernameHref);
+            userInfoDiv.innerHTML+=' '+ postDate;
+            userInfoDiv.innerHTML += '<p>' + post.text + '</p>';
+
             postElement.innerHTML += '<div class="col-xs-2"><img src="/images/avatar.png" class="user-post-avatar"></div>';
             postElement.innerHTML += '<div class="col-xs-10">';
-            postElement.innerHTML += '<strong>@' + post.authorUsername + '</strong> ' + postDate;
-            postElement.innerHTML += '<p>' + post.text + '</p>';
-            postElement.innerHTML += '</div>';
+            postElement.appendChild(userInfoDiv);
 
             var likeBtnDiv = document.createElement('div');
 
