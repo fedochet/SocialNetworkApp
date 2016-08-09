@@ -1,3 +1,4 @@
+<jsp:useBean id="sessionUser" scope="session" class="model.User"/>
 <%--
   Created by IntelliJ IDEA.
   User: roman
@@ -27,6 +28,7 @@
 <body>
 <header>
     <div hidden id="pageUser-Id">${pageUser.id}</div>
+    <div hidden id="sessionUser-Id">${sessionUser.id}</div>
     <div hidden id="canFollow">${canFollow}</div>
 
     <nav id="header-nav" class="navbar navbar-default navbar-fixed-top">

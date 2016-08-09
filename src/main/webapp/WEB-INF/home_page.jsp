@@ -28,6 +28,7 @@
 <body>
 <header>
     <div hidden id="pageUser-Id">${sessionUser.id}</div>
+    <div hidden id="sessionUser-Id">${sessionUser.id}</div>
 
     <nav id="header-nav" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
