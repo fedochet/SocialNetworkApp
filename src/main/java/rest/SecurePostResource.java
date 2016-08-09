@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
  */
 
 @Slf4j
-@Path("/posts")
+@Path("/secure/posts")
 @Produces(MediaType.APPLICATION_JSON)
 public class SecurePostResource {
     private final PostViewDAO postViewDAO;

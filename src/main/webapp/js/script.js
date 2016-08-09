@@ -7,11 +7,17 @@ window.addEventListener("DOMContentLoaded", function (event) {
         username: document.getElementById("pageUser-username").textContent
     };
 
+    var sessionUser = {
+        userId: document.getElementById("sessionUser-Id").textContent
+    };
+
+    if (document.getElementById("canFollow")) {
+        sessionUser.canFollow = (document.getElementById("canFollow").textContent == 'true');
+
+    }
+
     var followButton = document.getElementById("follow_button");
     if (followButton) {
-        var sessionUser = {
-            canFollow: document.getElementById("canFollow").textContent == 'true'
-        };
         followButton.onclick = function () {
             function switchFollowButton() {
                 followButton.className = "btn ";
@@ -49,6 +55,30 @@ window.addEventListener("DOMContentLoaded", function (event) {
     }
 
     function addPostsToElement(postsToAdd, element) {
+        function createDeleteButton(post, postElementToDelete) {
+            var deleteButton = document.createElement("button");
+            deleteButton.className = "btn btn-danger pull-right";
+
+            var glyphIconRemoveSpan = document.createElement("span");
+            glyphIconRemoveSpan.className = "glyphicon glyphicon-remove";
+
+            deleteButton.appendChild(glyphIconRemoveSpan);
+
+            deleteButton.addEventListener('click', function (event) {
+
+                $.ajax({
+                    url: "/rest/secure/posts/removepost",
+                    method: 'delete',
+                    headers: {'Content-type': 'application/json'},
+                    data: JSON.stringify({postId: post.id})
+                }).done(function() {
+                    postElementToDelete.parentNode.removeChild(postElementToDelete);
+                })
+            });
+
+            return deleteButton;
+        }
+
         function createLikeButton(post) {
             var likeButton = document.createElement("button");
             likeButton.type = 'button';
@@ -120,7 +150,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
             var postDate = epochToDate(post.creationTime.epochSecond);
 
             var userInfoDiv = document.createElement("div");
-            userInfoDiv.className = "col-xs-10";
+            userInfoDiv.className = "col-xs-8";
 
             var usernameHref = document.createElement("a");
             usernameHref.href = "/user/" + post.authorUsername;
@@ -131,17 +161,25 @@ window.addEventListener("DOMContentLoaded", function (event) {
             userInfoDiv.innerHTML += '<p>' + post.text + '</p>';
 
             postElement.innerHTML += '<div class="col-xs-2"><img src="/images/avatar.png" class="user-post-avatar"></div>';
-            postElement.innerHTML += '<div class="col-xs-10">';
             postElement.appendChild(userInfoDiv);
 
+            if (sessionUser.userId == post.authorId) {
+                var deleteBtnDiv = document.createElement('div');
+                deleteBtnDiv.className = "col-xs-2";
+                var deleteButton = createDeleteButton(post, postElement);
+
+                deleteBtnDiv.appendChild(deleteButton);
+                postElement.appendChild(deleteBtnDiv);
+            }
+
             var likeBtnDiv = document.createElement('div');
+            likeBtnDiv.className = "col-xs-12";
 
             var likeButton = createLikeButton(post);
 
-            likeBtnDiv.className = "col-xs-12";
-
             likeBtnDiv.appendChild(likeButton);
             postElement.appendChild(likeBtnDiv);
+
             element.appendChild(postElement);
         }
     }
