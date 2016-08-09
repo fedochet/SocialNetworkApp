@@ -57,12 +57,13 @@ window.addEventListener("DOMContentLoaded", function (event) {
     function addPostsToElement(postsToAdd, element) {
         function createDeleteButton(post, postElementToDelete) {
             var deleteButton = document.createElement("button");
-            deleteButton.className = "btn btn-danger pull-right";
+            deleteButton.className = "close";
+            deleteButton.type = "button";
 
-            var glyphIconRemoveSpan = document.createElement("span");
-            glyphIconRemoveSpan.className = "glyphicon glyphicon-remove";
+            var timesSpan = document.createElement("span");
+            timesSpan.innerHTML = '&times;';
 
-            deleteButton.appendChild(glyphIconRemoveSpan);
+            deleteButton.appendChild(timesSpan);
 
             deleteButton.addEventListener('click', function (event) {
 
