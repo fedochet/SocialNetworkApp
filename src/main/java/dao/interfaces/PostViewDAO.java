@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface PostViewDAO {
     List<PostView> getAsUserByAuthorId(int userId, int authorId, int offsetId, int limit);
+
+    List<PostView> getTimeline(int userId, int offsetId, int limit);
 }
