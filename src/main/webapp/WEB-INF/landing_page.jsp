@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setLocale value="ru" scope="application"/>
+<jsp:useBean id="locale" scope="session" class="java.lang.String"/>
+<fmt:setLocale value="${locale}" scope="application"/>
 <html>
 <head>
   <title><fmt:message key="landing.title"/></title>
@@ -24,6 +25,18 @@
         <a class="navbar-brand" href="<c:url value="/"/>">Awesome Net</a>
       </div>
       <div class="collapse navbar-collapse">
+        <form method="post" action="<c:url value="/changelocale"/>" class="navbar-form navbar-right">
+          <div class="btn-group" role="group" aria-label="...">
+            <c:if test="${locale eq 'ru'}">
+              <button class="btn btn-primary" name="locale" value="ru">RU</button>
+              <button class="btn btn-default" name="locale" value="en">EN</button>
+            </c:if>
+            <c:if test="${not(locale eq 'ru')}">
+              <button class="btn btn-default" name="locale" value="ru">RU</button>
+              <button class="btn btn-primary" name="locale" value="en">EN</button>
+            </c:if>
+          </div>
+        </form>
         <form class="navbar-form navbar-right" action="<c:url value="/login"/>" method="post">
           <div class="form-group">
             <input type="text" name="j_username" class="form-control" placeholder="<fmt:message key="landing.usernamePlaceholder"/>">
