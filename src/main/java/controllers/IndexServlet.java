@@ -2,6 +2,7 @@ package controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import model.User;
+import utils.SessionUtils;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -34,14 +35,15 @@ public class IndexServlet extends BaseServlet{
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Serving GET request on {} path.", "/");
 
-        Optional<User> userOpt
-                = Optional.ofNullable(req.getSession())
-                .flatMap(IndexServlet::getUser)
+        Optional<User> sessionUserOpt
+                = SessionUtils.getSessionUserOpt(req.getSession(false))
                 .map(User::getId)
                 .flatMap(userDAO::getById);
 
-        if (userOpt.isPresent()) {
-            log.info("Logged in as '{}'; forwarding to home_page", userOpt.get().getUsername());
+        if (sessionUserOpt.isPresent()) {
+            log.info("Logged in as '{}'; forwarding to home_page", sessionUserOpt.get().getUsername());
+            req.setAttribute("subscribesNumber", followerDAO.getNumberOfSubscribes(sessionUserOpt.get().getId()));
+            req.setAttribute("followersNumber", followerDAO.getNumberOfFollowers(sessionUserOpt.get().getId()));
             homePageJSPDispatcher.forward(req, resp);
         } else {
             log.info("User session is not attached; forwarding to landing_page.");

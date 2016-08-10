@@ -13,6 +13,8 @@
 <fmt:setLocale value="${locale}" scope="application"/>
 <jsp:useBean id="pageUser" scope="request" type="model.User"/>
 <jsp:useBean id="canFollow" scope="request" type="java.lang.Boolean"/>
+<jsp:useBean id="followersNumber" scope="request" type="java.lang.Integer"/>
+<jsp:useBean id="subscribesNumber" scope="request" type="java.lang.Integer"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -36,7 +38,9 @@
 
         var pageUser = {
             userId: ${pageUser.id},
-            username:'${pageUser.username}'
+            username:'${pageUser.username}',
+            followersNumber: 10,
+            subscribesNumber: 10
         };
 
         var sessionUser = {
@@ -88,7 +92,12 @@
                 </c:if>
                 <div class="clearfix"></div>
                 <p>${pageUser.info}</p>
+                <div class="btn-group btn-group-justified" role="group">
+                    <a href="#" class="btn btn-default">Followers: <strong>${followersNumber}</strong></a>
+                    <a href="#" class="btn btn-default">Subscribes: <strong>${subscribesNumber}</strong></a>
+                </div>
                 <c:if test="${not(sessionUser.id eq pageUser.id)}">
+                    <p></p>
                     <c:if test="${canFollow}">
                         <button type="button" class="btn btn-default" id="follow_button"><fmt:message key="body.followButton"/> @${pageUser.username}</button>
                     </c:if>

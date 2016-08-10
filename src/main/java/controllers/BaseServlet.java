@@ -1,5 +1,6 @@
 package controllers;
 
+import dao.interfaces.FollowerDAO;
 import dao.interfaces.PostDAO;
 import dao.interfaces.UserDAO;
 import listeners.ServicesProvider;
@@ -15,11 +16,13 @@ public class BaseServlet extends HttpServlet {
     protected UserDAO userDAO;
     protected PostDAO postDAO;
     protected SecurityService securityService;
+    protected FollowerDAO followerDAO;
 
     @Override
     public void init() throws ServletException {
         userDAO = (UserDAO) getServletContext().getAttribute(ServicesProvider.USER_DAO);
         postDAO = (PostDAO) getServletContext().getAttribute(ServicesProvider.POST_DAO);
         securityService = (SecurityService) getServletContext().getAttribute(ServicesProvider.SECURITY_SERVICE);
+        followerDAO = (FollowerDAO) getServletContext().getAttribute(ServicesProvider.FOLLOWER_DAO);
     }
 }

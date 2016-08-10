@@ -12,6 +12,8 @@
 <jsp:useBean id="locale" scope="session" class="java.lang.String"/>
 <fmt:setLocale value="${locale}" scope="application"/>
 <jsp:useBean id="sessionUser" scope="session" type="model.User"/>
+<jsp:useBean id="followersNumber" scope="request" type="java.lang.Integer"/>
+<jsp:useBean id="subscribesNumber" scope="request" type="java.lang.Integer"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -81,6 +83,10 @@
                 </c:if>
                 <div class="clearfix"></div>
                 <p>${sessionUser.info}</p>
+                <div class="btn-group btn-group-justified" role="group">
+                    <a href="#" class="btn btn-default"><fmt:message key="body.followersTitle"/>: <strong>${followersNumber}</strong></a>
+                    <a href="#" class="btn btn-default"><fmt:message key="body.subscribesTitle"/>: <strong>${subscribesNumber}</strong></a>
+                </div>
             </div>
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">

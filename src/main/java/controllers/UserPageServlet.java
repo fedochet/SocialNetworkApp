@@ -23,7 +23,6 @@ import java.util.Optional;
 public class UserPageServlet extends BaseServlet {
 
     private RequestDispatcher userPageJSPDisspatcher;
-    private FollowerDAO followerDAO;
 
     private static String removeLeadingSlash(String path) {
         return path.substring(1);
@@ -63,6 +62,8 @@ public class UserPageServlet extends BaseServlet {
                         .orElse(true);
 
         req.setAttribute("canFollow", canFollow);
+        req.setAttribute("subscribesNumber", followerDAO.getNumberOfSubscribes(userOpt.get().getId()));
+        req.setAttribute("followersNumber", followerDAO.getNumberOfFollowers(userOpt.get().getId()));
 
         userPageJSPDisspatcher.forward(req, resp);
     }
