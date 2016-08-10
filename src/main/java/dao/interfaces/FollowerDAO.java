@@ -14,4 +14,7 @@ public interface FollowerDAO {
 
     List<User> getAllFollowers(int userId);
     List<User> getAllSubscriptions(int userId);
+
+    int getNumberOfFollowers(int userId);
+    int getNumberOfSubscribes(int userId);
 }

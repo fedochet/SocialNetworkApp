@@ -76,29 +76,39 @@ public class H2FollowerDAOTest {
         user2.setPassword("user2");
         user2.setId(userDAO.create(user2));
 
+        assertThat(followerDAO.getNumberOfFollowers(testUser.getId()), is(0));
+        assertThat(followerDAO.getNumberOfSubscribes(testUser.getId()), is(0));
+
         assertTrue(followerDAO.getAllFollowers(testUser.getId()).isEmpty());
         assertTrue(followerDAO.getAllSubscriptions(testUser.getId()).isEmpty());
 
         followerDAO.addFollower(testUser.getId(), user1.getId());
+        assertThat(followerDAO.getNumberOfFollowers(testUser.getId()), is(1));
         assertThat(followerDAO.getAllFollowers(testUser.getId()).size(), is(1));
         assertThat(followerDAO.getAllFollowers(testUser.getId()).get(0),
                 is(userDAO.getById(user1.getId()).get()));
+        assertThat(followerDAO.getNumberOfSubscribes(testUser.getId()), is(0));
         assertTrue(followerDAO.getAllSubscriptions(testUser.getId()).isEmpty());
 
         followerDAO.addFollower(testUser.getId(), user2.getId());
+        assertThat(followerDAO.getNumberOfFollowers(testUser.getId()), is(2));
         assertThat(followerDAO.getAllFollowers(testUser.getId()).size(), is(2));
         assertThat(followerDAO.getAllFollowers(testUser.getId()).get(0),
                 is(userDAO.getById(user1.getId()).get()));
         assertThat(followerDAO.getAllFollowers(testUser.getId()).get(1),
                 is(userDAO.getById(user2.getId()).get()));
+        assertThat(followerDAO.getNumberOfSubscribes(testUser.getId()), is(0));
         assertTrue(followerDAO.getAllSubscriptions(testUser.getId()).isEmpty());
 
+        assertThat(followerDAO.getNumberOfSubscribes(user1.getId()), is(1));
         assertThat(followerDAO.getAllSubscriptions(user1.getId()).get(0),
                 is(userDAO.getById(testUser.getId()).get()));
+        assertThat(followerDAO.getNumberOfSubscribes(user2.getId()), is(1));
         assertThat(followerDAO.getAllSubscriptions(user2.getId()).get(0),
                 is(userDAO.getById(testUser.getId()).get()));
 
         followerDAO.addFollower(user1.getId(), user2.getId());
+        assertThat(followerDAO.getNumberOfSubscribes(user2.getId()), is(2));
         assertThat(followerDAO.getAllSubscriptions(user2.getId()).get(0),
                 is(userDAO.getById(testUser.getId()).get()));
         assertThat(followerDAO.getAllSubscriptions(user2.getId()).get(1),

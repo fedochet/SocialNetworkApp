@@ -103,8 +103,27 @@ public class H2FollowerDAO implements FollowerDAO {
     @Override
     public List<User> getAllSubscriptions(int userId) {
         String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time, role " +
-                "FROM users WHERE id IN (SELECT user_id FROM user_followers WHERE follower_id=?) " +
-                "ORDER BY id ASC";
+            "FROM users WHERE id IN (SELECT user_id FROM user_followers WHERE follower_id=?) " +
+            "ORDER BY id ASC";
+        try (
+    Connection c = connectionPool.getConnection();
+    PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+        statement.setInt(1, userId);
+
+        try (ResultSet resultSet = statement.executeQuery()) {
+            return parseUsers(resultSet);
+        }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+}
+
+    @Override
+    public int getNumberOfFollowers(int userId) {
+        String sql = "SELECT count(*) " +
+                "FROM users WHERE id IN (SELECT follower_id FROM user_followers WHERE user_id=?) ";
+
         try (
                 Connection c = connectionPool.getConnection();
                 PreparedStatement statement = c.prepareStatement(sql)
@@ -112,7 +131,31 @@ public class H2FollowerDAO implements FollowerDAO {
             statement.setInt(1, userId);
 
             try (ResultSet resultSet = statement.executeQuery()) {
-                return parseUsers(resultSet);
+                if (resultSet.next())
+                    return resultSet.getInt(1);
+
+                throw new SQLException("Nothing returned on 'count'!");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public int getNumberOfSubscribes(int userId) {
+        String sql = "SELECT count(*) " +
+                "FROM users WHERE id IN (SELECT user_id FROM user_followers WHERE follower_id=?) ";
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next())
+                    return resultSet.getInt(1);
+
+                throw new SQLException("Nothing returned on 'count'!");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
