@@ -17,6 +17,10 @@ window.addEventListener("DOMContentLoaded", function (event) {
                 }
             }
 
+            function changeFollowersNumber(value) {
+
+            }
+
             if (sessionUser.userId == 0) {
                 console.log("No session is attached; should redirect to login page!");
                 return;
