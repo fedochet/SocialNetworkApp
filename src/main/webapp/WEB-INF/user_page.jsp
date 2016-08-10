@@ -8,6 +8,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="ru" scope="application"/>
 <jsp:useBean id="pageUser" scope="request" type="model.User"/>
 <jsp:useBean id="canFollow" scope="request" type="java.lang.Boolean"/>
 <html>
@@ -24,6 +26,23 @@
             ${pageUser.firstName} ${pageUser.lastName} (</c:if>@${pageUser.username}<c:if test="${not empty pageUser.firstName or not empty pageUser.lastName}">)
         </c:if>
     </title>
+
+    <script>
+        var localeStrings = {
+            followButtonText: '<fmt:message key="body.followButton"/>',
+            unfollowButtonText: '<fmt:message key="body.unfollowButton"/>'
+        };
+
+        var pageUser = {
+            userId: ${pageUser.id},
+            username:'${pageUser.username}'
+        };
+
+        var sessionUser = {
+            userId: ${sessionUser.id},
+            canFollow: '${canFollow}'
+        };
+    </script>
 </head>
 <body>
 <header>
@@ -38,7 +57,7 @@
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#" ><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                    <li class="active"><a href="#" ><span class="glyphicon glyphicon-home"></span> <fmt:message key="header.home"/></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -68,16 +87,18 @@
                 </c:if>
                 <div class="clearfix"></div>
                 <p>${pageUser.info}</p>
-                <c:if test="${canFollow}">
-                    <button type="button" class="btn btn-default" id="follow_button">Follow @${pageUser.username}</button>
-                </c:if>
-                <c:if test="${not canFollow}">
-                    <button type="button" class="btn btn-primary" id="follow_button">Following @${pageUser.username}</button>
+                <c:if test="${not(sessionUser.id eq pageUser.id)}">
+                    <c:if test="${canFollow}">
+                        <button type="button" class="btn btn-default" id="follow_button"><fmt:message key="body.followButton"/> @${pageUser.username}</button>
+                    </c:if>
+                    <c:if test="${not canFollow}">
+                        <button type="button" class="btn btn-primary" id="follow_button"><fmt:message key="body.unfollowButton"/> @${pageUser.username}</button>
+                    </c:if>
                 </c:if>
             </div>
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-            <h1>Posts</h1>
+            <h1><fmt:message key="body.posts"/></h1>
             <div id="posts"></div>
         </div>
     </div>

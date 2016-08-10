@@ -8,6 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="ru" scope="application"/>
 <jsp:useBean id="sessionUser" scope="session" type="model.User"/>
 <html>
 <head>
@@ -24,6 +26,18 @@
         <c:if test="${not empty sessionUser.firstName or not empty sessionUser.lastName}">)
         </c:if>
     </title>
+
+    <script>
+        var localeStrings = {
+            followButtonText: '<fmt:message key="body.followButton"/>',
+            unfollowButtonText: '<fmt:message key="body.unfollowButton"/>'
+        };
+
+        var sessionUser = {
+            userId: ${sessionUser.id},
+            canFollow: '${canFollow}'
+        };
+    </script>
 </head>
 <body>
 <header>
@@ -37,7 +51,7 @@
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                    <li class="active"><a href="#"><span class="glyphicon glyphicon-home"></span> <fmt:message key="header.home"/></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
@@ -73,21 +87,21 @@
             <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <div class="panel-title">Add new post</div>
+                        <div class="panel-title"><fmt:message key="body.addNewPost"/></div>
                     </div>
                     <div class="panel-body">
                         <form action="<c:url value="/addpost"/>" method="post">
                             <div class="form-group">
-                                <textarea name="text" class="form-control" rows="3" placeholder="What's on your mind?"
+                                <textarea name="text" class="form-control" rows="3" placeholder="<fmt:message key="body.addNewPostPlaceholder"/>"
                                           maxlength="255"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary pull-right">Public post</button>
+                            <button type="submit" class="btn btn-primary pull-right"><fmt:message key="body.publicNewPost"/></button>
                         </form>
                     </div>
                 </div>
             </div>
             <div>
-                <h1>News</h1>
+                <h1><fmt:message key="body.newsHeader"/></h1>
                 <div id="timeline"></div>
             </div>
         </div>

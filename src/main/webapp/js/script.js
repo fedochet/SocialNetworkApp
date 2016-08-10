@@ -2,33 +2,19 @@ window.addEventListener("DOMContentLoaded", function (event) {
     var postsElement = document.getElementById("posts");
     var timelineElement = document.getElementById("timeline");
 
-    var pageUser = {
-        userId: document.getElementById("pageUser-Id").textContent,
-        username: document.getElementById("pageUser-username").textContent
-    };
-
-    var sessionUser = {
-        userId: document.getElementById("sessionUser-Id").textContent
-    };
-
-    if (document.getElementById("canFollow")) {
-        sessionUser.canFollow = (document.getElementById("canFollow").textContent == 'true');
-
-    }
-
     var followButton = document.getElementById("follow_button");
     if (followButton) {
         followButton.onclick = function () {
             function switchFollowButton() {
+                sessionUser.canFollow = !(sessionUser.canFollow);
                 followButton.className = "btn ";
                 if (sessionUser.canFollow) {
-                    followButton.className += "btn-primary";
-                    followButton.innerText = "Following " + pageUser.username
-                } else {
                     followButton.className += "btn-default";
-                    followButton.innerText = "Follow " + pageUser.username
+                    followButton.innerText =  localeStrings.followButtonText + " " + pageUser.username
+                } else {
+                    followButton.className += "btn-primary";
+                    followButton.innerText = localeStrings.unfollowButtonText + " " + pageUser.username
                 }
-                sessionUser.canFollow = !(sessionUser.canFollow);
             }
 
             if (sessionUser.userId == 0) {
@@ -197,10 +183,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
     }
 
     function isNoMorePosts(messages) {
-        var lastRequestHadZeroPosts = messages.length == 0;
-        var isLastPostWereLastPostInDB = lastElement(messages).id == 1;
-
-        return lastRequestHadZeroPosts || isLastPostWereLastPostInDB;
+        return (messages.length == 0) || (lastElement(messages).id == 1);
     }
 
     function loadTimeline(offsetId, limit) {
@@ -225,7 +208,7 @@ window.addEventListener("DOMContentLoaded", function (event) {
             } else {
                 window.onscroll = function (ev) {
                     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                        loadTimeline(user, lastElement(receivedPosts).id - 1, 5)
+                        loadTimeline(lastElement(receivedPosts).id - 1, 5)
                     }
                 };
             }
