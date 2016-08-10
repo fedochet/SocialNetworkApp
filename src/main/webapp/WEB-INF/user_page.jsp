@@ -41,7 +41,7 @@
 
         var sessionUser = {
             userId: ${sessionUser.id},
-            canFollow: '${canFollow}'
+            canFollow: ${canFollow}
         };
     </script>
 </head>

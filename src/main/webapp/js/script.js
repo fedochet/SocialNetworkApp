@@ -10,10 +10,10 @@ window.addEventListener("DOMContentLoaded", function (event) {
                 followButton.className = "btn ";
                 if (sessionUser.canFollow) {
                     followButton.className += "btn-default";
-                    followButton.innerText =  localeStrings.followButtonText + " " + pageUser.username
+                    followButton.innerText =  localeStrings.followButtonText + " @" + pageUser.username
                 } else {
                     followButton.className += "btn-primary";
-                    followButton.innerText = localeStrings.unfollowButtonText + " " + pageUser.username
+                    followButton.innerText = localeStrings.unfollowButtonText + " @" + pageUser.username
                 }
             }
 
