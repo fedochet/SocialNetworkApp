@@ -4,9 +4,11 @@ import common.cp.ConnectionPool;
 import dao.interfaces.UserDAO;
 import model.User;
 import model.UserRole;
+import utils.DAOUtils;
 
 import java.sql.*;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static utils.DAOUtils.parseUserOpt;
@@ -19,7 +21,7 @@ import static utils.GeneralUtils.mapOrNull;
 public class H2UserDAO implements UserDAO {
     private final ConnectionPool connectionPool;
 
-    public H2UserDAO(ConnectionPool connectionPool){
+    public H2UserDAO(ConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
@@ -41,12 +43,39 @@ public class H2UserDAO implements UserDAO {
         String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time, role " +
                 "FROM users WHERE username=?";
         try (
-            Connection c = connectionPool.getConnection();
-            PreparedStatement statement = c.prepareStatement(sql)
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
         ) {
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return parseUserOpt(resultSet);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<User> getUsers(int offsetId, int limit) {
+        String sql = "SELECT id, username, password, first_name, last_name, info, birth_date, registration_time, role " +
+                "FROM users ";
+        if (offsetId != -1) {
+            sql += "WHERE id >= ? ";
+        }
+        sql += "LIMIT ?";
+
+        try (
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
+            if (offsetId!=-1) {
+                statement.setInt(1, offsetId);
+                statement.setInt(2, limit);
+            } else {
+                statement.setInt(1, limit);
+            }
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return DAOUtils.parseUsers(resultSet);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -64,8 +93,8 @@ public class H2UserDAO implements UserDAO {
         ) {
             setUpUser(statement, model);
             statement.executeUpdate();
-            
-            try (ResultSet generated = statement.getGeneratedKeys()){
+
+            try (ResultSet generated = statement.getGeneratedKeys()) {
                 if (generated.next()) {
                     return generated.getInt(1);
                 } else throw new SQLException("Creating user failed: no ID generated");
@@ -84,7 +113,7 @@ public class H2UserDAO implements UserDAO {
                 PreparedStatement statement = c.prepareStatement(sql)
         ) {
             statement.setInt(1, id);
-            try(ResultSet resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = statement.executeQuery()) {
                 return parseUserOpt(resultSet);
             }
 
@@ -100,12 +129,12 @@ public class H2UserDAO implements UserDAO {
                 + "WHERE id=?";
 
         try (
-            Connection c = connectionPool.getConnection();
-            PreparedStatement statement = c.prepareStatement(sql)
-        ){
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
             int nextIndex = setUpUser(statement, model);
             statement.setInt(nextIndex, model.getId());
-            return statement.executeUpdate()>0;
+            return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -116,11 +145,11 @@ public class H2UserDAO implements UserDAO {
     public boolean deleteById(int id) {
         String sql = "DELETE FROM users WHERE id=?";
         try (
-            Connection c = connectionPool.getConnection();
-            PreparedStatement statement = c.prepareStatement(sql)
-        ){
+                Connection c = connectionPool.getConnection();
+                PreparedStatement statement = c.prepareStatement(sql)
+        ) {
             statement.setInt(1, id);
-            return statement.executeUpdate()!=0;
+            return statement.executeUpdate() != 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

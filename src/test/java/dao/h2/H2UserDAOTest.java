@@ -13,7 +13,9 @@ import utils.SQLUtils;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -223,5 +225,42 @@ public class H2UserDAOTest {
         User testUser = getTestUser();
         testUser.setId(-1);
         assertFalse(userDAO.update(testUser));
+    }
+
+    @Test
+    public void youCanGetUsersWithOffsetIdAndLimit(){
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setPassword("pwd");
+        user1.setId(userDAO.create(user1));
+
+        User user2 = new User();
+        user2.setUsername("user2");
+        user2.setPassword("pwd");
+        user2.setId(userDAO.create(user2));
+
+        User user3 = new User();
+        user3.setUsername("user3");
+        user3.setPassword("pwd");
+        user3.setId(userDAO.create(user3));
+
+        assertThat(userDAO.getUsers(-1, 100).size(), is(3));
+        assertThat(userDAO.getUsers(-1, 1).size(), is(1));
+        assertThat(userDAO.getUsers(-1, 2).size(), is(2));
+
+        assertThat("Wrong order!", userDAO.getUsers(-1, 3).stream()
+                        .sorted(Comparator.comparing(User::getId))
+                        .collect(Collectors.toList()), is(userDAO.getUsers(-1, 3)));
+
+        assertThat(userDAO.getUsers(user1.getId(), 100).size(), is(3));
+        assertThat(userDAO.getUsers(user2.getId(), 100).size(), is(2));
+        assertThat(userDAO.getUsers(user3.getId(), 100).size(), is(1));
+
+        assertThat("Limit and offset combined are not working!",
+                userDAO.getUsers(user2.getId(), 1).size(), is(1));
+
+        userDAO.deleteById(user1.getId());
+        userDAO.deleteById(user2.getId());
+        userDAO.deleteById(user3.getId());
     }
 }
