@@ -5,6 +5,7 @@ import common.cp.SimpleConnectionPool;
 import dao.h2.*;
 import dao.interfaces.*;
 import model.User;
+import model.UserRole;
 import services.SecurityService;
 import utils.SQLUtils;
 
@@ -91,6 +92,7 @@ public class ServicesProvider implements ServletContextListener {
         user.setFirstName("John");
         user.setLastName("Does");
         user.setPassword(securityService.encryptPassword("1234"));
+        user.setRole(UserRole.ADMIN);
 
         userDAO.create(user);
     }
