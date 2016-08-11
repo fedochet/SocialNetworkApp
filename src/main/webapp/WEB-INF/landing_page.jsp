@@ -27,11 +27,11 @@
       <div class="collapse navbar-collapse">
         <form method="post" action="<c:url value="/changelocale"/>" class="navbar-form navbar-right">
           <div class="btn-group" role="group" aria-label="...">
-            <c:if test="${locale eq 'ru'}">
+            <c:if test="${(empty locale) or (locale eq 'ru')}">
               <button class="btn btn-primary" name="locale" value="ru">RU</button>
               <button class="btn btn-default" name="locale" value="en">EN</button>
             </c:if>
-            <c:if test="${not(locale eq 'ru')}">
+            <c:if test="${not ((empty locale) or (locale eq 'ru'))}">
               <button class="btn btn-default" name="locale" value="ru">RU</button>
               <button class="btn btn-primary" name="locale" value="en">EN</button>
             </c:if>

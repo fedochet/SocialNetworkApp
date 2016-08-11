@@ -33,7 +33,7 @@ public class AdminPageServlet extends BaseServlet {
     }
 
     private int getLimit(HttpServletRequest request) {
-        return getIntFromRequest(request, "limit", 20);
+        return getIntFromRequest(request, "limit", 5);
     }
 
     @Override
@@ -44,6 +44,8 @@ public class AdminPageServlet extends BaseServlet {
         int limit = getLimit(req);
 
         req.setAttribute("users", userDAO.getUsers(offsetId, limit));
+        req.setAttribute("offsetId", offsetId);
+        req.setAttribute("limit", limit);
 
         req.getRequestDispatcher("/WEB-INF/admin_page.jsp").forward(req, resp);
     }
