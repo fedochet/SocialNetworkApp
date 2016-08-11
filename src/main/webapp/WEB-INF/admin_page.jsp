@@ -8,6 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:useBean id="sessionUser" scope="session" type="model.User"/>
+
 <jsp:useBean id="users" scope="request" type="java.util.List<model.User>"/>
 <jsp:useBean id="offsetId" scope="request" type="java.lang.Integer"/>
 <jsp:useBean id="limit" scope="request" type="java.lang.Integer"/>
@@ -40,8 +42,14 @@
                         <td>${user.firstName}</td>
                         <td>${user.lastName}</td>
                         <td>${user.role}</td>
-                        <td><form action="/admin/changerole" method="post"><button name="user_id" value="${user.id}" class="btn btn-xs btn-default btn-primary">Change role</button></form></td>
-                        <td><form action="/admin/removeuser" method="post"><button name="user_id" value="${user.id}" class="btn btn-xs btn-default btn-danger">Delete</button></form></td>
+                        <c:if test="${not (user.id eq sessionUser.id)}">
+                            <td><form action="/admin/changerole" method="post"><button name="user_id" value="${user.id}" class="btn btn-xs btn-default btn-primary">Change role</button></form></td>
+                            <td><form action="/admin/removeuser" method="post"><button name="user_id" value="${user.id}" class="btn btn-xs btn-default btn-danger">Delete</button></form></td>
+                        </c:if>
+                        <c:if test="${(user.id eq sessionUser.id)}">
+                            <td>It's you</td>
+                            <td>It's you</td>
+                        </c:if>
                     </tr>
                 </c:forEach>
             </table>

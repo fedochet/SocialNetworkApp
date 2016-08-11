@@ -2,6 +2,8 @@ package controllers.admin;
 
 import controllers.BaseServlet;
 import lombok.extern.slf4j.Slf4j;
+import model.User;
+import model.UserRole;
 import utils.SessionUtils;
 
 import javax.servlet.ServletException;
@@ -14,9 +16,9 @@ import java.util.Optional;
 /**
  * Created by roman on 11.08.2016.
  */
-@WebServlet("/admin/removeuser")
 @Slf4j
-public class AdminRemoveUserServlet extends BaseServlet {
+@WebServlet(urlPatterns = "/admin/changerole")
+public class AdminChangeUserRoleServlet extends BaseServlet {
 
     private int getIntFromRequest(HttpServletRequest request, String paramName, int defaultValue) {
         try {
@@ -33,6 +35,7 @@ public class AdminRemoveUserServlet extends BaseServlet {
         return getIntFromRequest(request, "user_id", -1);
     }
 
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Serving POST on {}", req.getServletPath());
@@ -44,28 +47,43 @@ public class AdminRemoveUserServlet extends BaseServlet {
             return;
         }
 
-        boolean isSameUser = SessionUtils.getSessionUser(req.getSession()).getId()==userId;
+        Optional<User> userToChangeOpt =
+                userDAO.getById(userId);
+
+        if (!userToChangeOpt.isPresent()) {
+            log.warn("This user does not exists! Redirecting to error page");
+            resp.sendError(404, "This user does  not exist");
+            return;
+        }
+
+        User userToChange = userToChangeOpt.get();
+
+        boolean isSameUser = SessionUtils.getSessionUser(req.getSession()).getId()==userToChange.getId();
 
         if (isSameUser) {
-            log.warn("Admin is Trying to delete himself! Redirecting to error page");
-            resp.sendError(406, "You can't delete yourself");
+            log.warn("Admin is Trying to change itself role! Redirecting to error page");
+            resp.sendError(406, "You can't change your own role");
             return;
         }
 
 
-        log.info("Trying to delete user with id {}", userId);
+        if (userToChange.getRole().equals(UserRole.ADMIN)) {
+            userToChange.setRole(UserRole.USER);
+        } else {
+            userToChange.setRole(UserRole.ADMIN);
+        }
+
         try {
-            if (userDAO.deleteById(userId)){
-                log.info("User is successfully deleted!");
+            log.info("Trying to set user {} role to {}", userToChange.getUsername(), userToChange.getRole());
+            if (userDAO.update(userToChange)){
+                log.info("Updated user {} role to {} successfully! Redirecting to /admin/adminpage", userToChange.getUsername(), userToChange.getRole());
+                resp.sendRedirect("/admin/adminpage");
             } else {
-                log.warn("Something went wrong; user is not deleted");
+                log.warn("Update went unsuccessfull; no such user found. Redirecting to error page");
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Update went unsuccessfull; no such user found");
             }
-
-            log.info("Redirecting to /admin/adminpage");
-
-            resp.sendRedirect("/admin/adminpage");
         } catch (RuntimeException e) {
-            log.warn("Error occured while trying to delete user. Redirect to error page",e);
+            log.warn("Error occured while trying to update user. Redirect to error page",e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error occured while trying to delete user");
         }
     }
