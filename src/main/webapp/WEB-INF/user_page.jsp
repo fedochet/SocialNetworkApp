@@ -62,18 +62,20 @@
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#" ><span class="glyphicon glyphicon-home"></span> <fmt:message key="header.home"/></a></li>
+                    <li class="active"><a href="<c:url value="/"/>" ><span class="glyphicon glyphicon-home"></span> <fmt:message key="header.home"/></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="#" class="glyphicon glyphicon-user"></a>
-                    </li>
-                    <li>
-                        <a href="#" class="glyphicon glyphicon-cog" id="nav-settings"></a>
-                    </li>
-                    <li>
-                        <a href="#" class="glyphicon glyphicon-log-out" id="nav-logout"></a>
-                    </li>
+                    <c:if test="${sessionUser.id!=0}">
+                        <li>
+                            <a href="/user/${sessionUser.username}" class="glyphicon glyphicon-user"></a>
+                        </li>
+                        <li>
+                            <a href="<c:url value="/settings"/>" class="glyphicon glyphicon-cog" id="nav-settings"></a>
+                        </li>
+                        <li>
+                            <a href="<c:url value="/logout"/>" class="glyphicon glyphicon-log-out" id="nav-logout"></a>
+                        </li>
+                    </c:if>
                 </ul>
             </div>
         </div>
@@ -93,8 +95,9 @@
                 <div class="clearfix"></div>
                 <p>${pageUser.info}</p>
                 <div class="btn-group btn-group-justified" role="group">
-                    <a href="#" class="btn btn-default">Followers: <strong>${followersNumber}</strong></a>
-                    <a href="#" class="btn btn-default">Subscribes: <strong>${subscribesNumber}</strong></a>
+                    <a href="/followers/${pageUser.username}" class="btn btn-default"><fmt:message key="body.followersTitle"/>: <strong>${followersNumber}</strong></a>
+                    <a href="/subscribes/${pageUser.username}" class="btn btn-default"><fmt:message key="body.subscribesTitle"/>: <strong>${subscribesNumber}</strong></a>
+
                 </div>
                 <c:if test="${not(sessionUser.id eq pageUser.id)}">
                     <p></p>

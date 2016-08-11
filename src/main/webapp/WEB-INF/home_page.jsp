@@ -84,8 +84,8 @@
                 <div class="clearfix"></div>
                 <p>${sessionUser.info}</p>
                 <div class="btn-group btn-group-justified" role="group">
-                    <a href="#" class="btn btn-default"><fmt:message key="body.followersTitle"/>: <strong>${followersNumber}</strong></a>
-                    <a href="#" class="btn btn-default"><fmt:message key="body.subscribesTitle"/>: <strong>${subscribesNumber}</strong></a>
+                    <a href="/followers/${sessionUser.username}" class="btn btn-default"><fmt:message key="body.followersTitle"/>: <strong>${followersNumber}</strong></a>
+                    <a href="/subscribes/${sessionUser.username}" class="btn btn-default"><fmt:message key="body.subscribesTitle"/>: <strong>${subscribesNumber}</strong></a>
                 </div>
             </div>
         </div>

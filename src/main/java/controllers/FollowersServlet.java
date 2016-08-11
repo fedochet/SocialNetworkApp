@@ -11,12 +11,11 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Created by roman on 08.08.2016.
+ * Created by roman on 11.08.2016.
  */
-@WebServlet(urlPatterns = "/subscribes/*")
 @Slf4j
-public class SubscribesServlet extends BaseServlet {
-
+@WebServlet(urlPatterns = "/followers/*")
+public class FollowersServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Serving GET on {} path", req.getServletPath() + req.getPathInfo());
@@ -33,7 +32,7 @@ public class SubscribesServlet extends BaseServlet {
 
         req.setAttribute("pageUser", pageUser.get());
         req.setAttribute("usersList",
-                followerDAO.getAllSubscriptions(pageUser.get().getId()));
-        req.getRequestDispatcher("/WEB-INF/subscribes_page.jsp").forward(req, resp);
+                followerDAO.getAllFollowers(pageUser.get().getId()));
+        req.getRequestDispatcher("/WEB-INF/followers_page.jsp").forward(req, resp);
     }
 }

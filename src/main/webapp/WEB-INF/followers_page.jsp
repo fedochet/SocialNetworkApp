@@ -45,15 +45,17 @@
                     <li class="active"><a href="<c:url value="/"/>"><span class="glyphicon glyphicon-home"></span> <fmt:message key="header.home"/></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="<c:url value="/user/${pageUser.username}"/>" class="glyphicon glyphicon-user"></a>
-                    </li>
-                    <li>
-                        <a href="<c:url value="/settings"/>" class="glyphicon glyphicon-cog" id="nav-settings"></a>
-                    </li>
-                    <li>
-                        <a href="<c:url value="/logout"/>" class="glyphicon glyphicon-log-out" id="nav-logout"></a>
-                    </li>
+                    <c:if test="${sessionUser.id!=0}">
+                        <li>
+                            <a href="/user/${sessionUser.username}" class="glyphicon glyphicon-user"></a>
+                        </li>
+                        <li>
+                            <a href="<c:url value="/settings"/>" class="glyphicon glyphicon-cog" id="nav-settings"></a>
+                        </li>
+                        <li>
+                            <a href="<c:url value="/logout"/>" class="glyphicon glyphicon-log-out" id="nav-logout"></a>
+                        </li>
+                    </c:if>
                 </ul>
             </div>
         </div>
@@ -75,7 +77,7 @@
             </div>
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-            <h1><fmt:message key="subscribes.subscribesOf"/> @${pageUser.username}</h1>
+            <h1><fmt:message key="followers.followersOf"/> @${pageUser.username}</h1>
             <div id="subscribes" class="row">
             <c:forEach items="${usersList}" var="user">
                     <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12">
@@ -86,9 +88,6 @@
                             <h4><a href="/user/${user.username}">@${user.username}</a></h4>
                             <h5>${user.firstName} ${user.lastName}</h5>
                             <div class="clearfix"></div>
-                            <c:if test="${pageUser.id eq sessionUser.id}">
-                                <button data-user-id="${user.id}" class="unfollow-button btn btn-primary">Following</button>
-                            </c:if>
                         </div>
                     </div>
                 </c:forEach>
@@ -102,34 +101,5 @@
 <script src="<c:url value="/js/script.js"/>"></script>
 
 </body>
-<script>
-    var buttons = document.getElementsByClassName("unfollow-button");
-
-    function removeSubscribe(btn) {
-        function removeSubscribeCard(btn) {
-            var btnDiv = btn.parentNode;
-            var userDiv = btnDiv.parentNode;
-            var holder = userDiv.parentNode;
-            holder.removeChild(userDiv);
-        }
-
-        $.ajax({
-            url: '/rest/secure/followers/unsubscribe',
-            headers: {'Content-type': 'application/json'},
-            method: 'delete',
-            data: JSON.stringify({userId: btn.dataset.userId})
-        }).done(removeSubscribeCard(btn));
-    }
-
-    function addListener(btn) {
-        btn.addEventListener('click', function (event) {
-            removeSubscribe(btn)
-        })
-    }
-
-    for (var i = 0; i<buttons.length; i++) {
-        addListener(buttons[i])
-    }
-</script>
 </html>
 
