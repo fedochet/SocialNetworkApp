@@ -19,7 +19,14 @@ import java.util.Optional;
  */
 
 @Slf4j
-@WebFilter(urlPatterns = {"/home", "/addpost", "/settings", "/secure/*", "/rest/secure/*", "/subscribes"})
+@WebFilter(urlPatterns = {
+        "/home",
+        "/addpost",
+        "/settings",
+        "/secure/*",
+        "/rest/secure/*",
+        "/admin/*",
+        "/rest/admin/*"})
 public class LoginFilter implements Filter {
     private static UserDAO userDAO;
 
@@ -34,7 +41,7 @@ public class LoginFilter implements Filter {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("Filtering {} path", request.getServletPath());
+        log.info("Filtering {} path", request.getServletPath() + request.getPathInfo());
 
         Optional<User> userOpt
                 = SessionUtils.getSessionUserOpt(request.getSession(false))
